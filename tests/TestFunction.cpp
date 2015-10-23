@@ -448,7 +448,7 @@ void TestFunction::minibex01() {
 	Function f(x,y,e,"f");
 	std::string m = f.minibex();
 	char* d=strdup(m.c_str());
-	CPPUNIT_ASSERT(strcmp(m.c_str(),"function f(x,y)\n  _tmp_0_ = (x+y);\n  return (_tmp_0_+_tmp_0_);\nend")==0);
+	TEST_ASSERT(strcmp(m.c_str(),"function f(x,y)\n  _tmp_0_ = (x+y);\n  return (_tmp_0_+_tmp_0_);\nend")==0);
 }
 
 void TestFunction::minibex02() {
@@ -462,7 +462,7 @@ void TestFunction::minibex02() {
 	Function f2(fin);
 
 	m = f2.minibex();
-	CPPUNIT_ASSERT(strcmp(m.c_str(),"function f(x,y)\n  _tmp_0_ = (x+y);\n  return (_tmp_0_+_tmp_0_);\nend")==0);
+	TEST_ASSERT(strcmp(m.c_str(),"function f(x,y)\n  _tmp_0_ = (x+y);\n  return (_tmp_0_+_tmp_0_);\nend")==0);
 }
 
 void TestFunction::minibex03() {
@@ -471,13 +471,13 @@ void TestFunction::minibex03() {
 	IntervalMatrix M(2,3,_m);
 	Function f(x,x+M,"f");
 	std::string m = f.minibex();
-	CPPUNIT_ASSERT(strcmp(m.c_str(),"function f(x[2][3])\n  return (x+((0 , 1 , 2) ; (3 , 4 , 5)));\nend")==0);
+	TEST_ASSERT(strcmp(m.c_str(),"function f(x[2][3])\n  return (x+((0 , 1 , 2) ; (3 , 4 , 5)));\nend")==0);
 
 	FILE *fin = fmemopen((void*) m.c_str(), m.length(), "r");
 	Function f2(fin);
 
 	m = f2.minibex();
-	CPPUNIT_ASSERT(strcmp(m.c_str(),"function f(x[2][3])\n  return (x+((0 , 1 , 2) ; (3 , 4 , 5)));\nend")==0);
+	TEST_ASSERT(strcmp(m.c_str(),"function f(x[2][3])\n  return (x+((0 , 1 , 2) ; (3 , 4 , 5)));\nend")==0);
 }
 
 void TestFunction::issue43() {
