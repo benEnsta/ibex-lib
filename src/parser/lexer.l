@@ -22,7 +22,7 @@
 #include "ibex_SyntaxError.h"
 #include "ibex_P_NumConstraint.h"
 
-#include "parser.tab.hh"
+#include "parser.hpp"
 
 #include <stdlib.h>
 #include <stack>
