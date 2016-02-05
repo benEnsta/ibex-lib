@@ -1,0 +1,24 @@
+version: 1.0.{build}
+os: Visual Studio 2015
+clone_folder: C:\projects\ibex-lib
+test: off
+configuration:
+    - Release
+    - Debug
+branches:
+  only:
+    - pyIbex_version_v3
+environment:
+  matrix:
+    - CMAKE_PLATFORM: "Visual Studio 14 2015"
+      # PYTHON_DIR: "C:\\Python34"
+    - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
+      # PYTHON_DIR: "C:\\Python34-x64"
+
+build_script:
+  - echo Running cmake...
+  - cd c:\projects\ibex-lib
+  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF ../
+  - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
+  - msbuild %MSBuildOptions% PACKAGE.vcxprojl
