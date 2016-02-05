@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 2.1.{build}
 os: Visual Studio 2015
 clone_folder: C:\projects\ibex-lib
 test: off
@@ -31,7 +31,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: O/0kJW2IBWg983EV67WN8sfYPQdPZyhnd4SnO1bQurtAzEAKxivf2eDliJNdhYba # your encrypted token from GitHub
-  artifact: /.*\.exe/            # upload all NuGet packages to release assets
+  artifact: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
   draft: true
   prerelease: false
   on:
