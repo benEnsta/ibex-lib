@@ -27,9 +27,9 @@ build_script:
 
 
 
-artifacts:
-  - path: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
-    name: ibex_package
+# artifacts:
+#   - path: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
+#     name: ibex_package
 
 deploy:
   release: ibex-lib-v$(appveyor_build_version)
@@ -37,7 +37,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: O/0kJW2IBWg983EV67WN8sfYPQdPZyhnd4SnO1bQurtAzEAKxivf2eDliJNdhYba # your encrypted token from GitHub
-  artifact: ibex_package
+  artifact: '**\*.exe'
   draft: true
   prerelease: false
   on:
