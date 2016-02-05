@@ -25,13 +25,19 @@ build_script:
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
 
+
+
+artifacts:
+  - path: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
+  - name: ibex_package
+
 deploy:
   release: ibex-lib-v$(appveyor_build_version)
   description: 'Release description'
   provider: GitHub
   auth_token:
     secure: O/0kJW2IBWg983EV67WN8sfYPQdPZyhnd4SnO1bQurtAzEAKxivf2eDliJNdhYba # your encrypted token from GitHub
-  artifact: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
+  artifact: ibex_package
   draft: true
   prerelease: false
   on:
