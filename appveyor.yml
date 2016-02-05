@@ -29,7 +29,7 @@ build_script:
 
 artifacts:
   - path: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
-  - name: ibex_package
+  name: ibex_package
 
 deploy:
   release: ibex-lib-v$(appveyor_build_version)
