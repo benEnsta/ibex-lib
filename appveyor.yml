@@ -27,7 +27,7 @@ build_script:
 
 
 artifacts:
-- path: C:/projects/ibex-lib/build/ibex-lib-2.1.12-win64.exe
+- path: '**\*.exe'
   name: ibex-lib
 
 deploy:
