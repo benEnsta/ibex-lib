@@ -27,12 +27,12 @@ build_script:
 
 
 artifacts:
-- path: '**\*.exe'
+- path: build\*.exe
   name: ibex-lib
 
 deploy:
   release: ibex-lib-v$(appveyor_build_version)
-  description: 'Release description'
+  description: 'Custom ibex version for pyIbex and Robotics'
   provider: GitHub
   auth_token:
     secure: kfuelei+usQrQv/IZnoepVAx6SU1E8BKoR6rXwXM3grYnvzBQM2P9xMKQ+Nc+BYr
