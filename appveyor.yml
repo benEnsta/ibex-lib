@@ -20,8 +20,7 @@ build_script:
   - echo %PATH%
   - ls '%CPACK_PATH%'
   #- set CPACK_PATH='C:\\Program Files (x86)\\CMake\\bin'
-  - set PATH=%CPACK_PATH%;%PATH%
-  - cpack.exe -G ZIP
+  - set PATH=%CPACK_PATH%;%PATH% # conflit with choco pack alias. need to put cpack.exe first
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
