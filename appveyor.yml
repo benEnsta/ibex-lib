@@ -16,6 +16,7 @@ environment:
       # PYTHON_DIR: "C:\\Python34-x64"
 
 build_script:
+  - "C:\Program Files (x86)\CMake\bin\cpack.exe -G ZIP" 
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
