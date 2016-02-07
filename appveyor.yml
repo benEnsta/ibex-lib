@@ -13,13 +13,14 @@ environment:
     # - CMAKE_PLATFORM: "Visual Studio 14 2015"
       # PYTHON_DIR: "C:\\Python34"
     - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
+      CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
       # PYTHON_DIR: "C:\\Python34-x64"
 
 build_script:
   - echo %PATH%
-  - ls 'C:\\Program Files (x86)\\CMake\\bin'
-  - set CPACK_PATH='C:\\Program Files (x86)\\CMake\\bin'
-  - "%CPACK_PATH%/cpack.exe -G ZIP"
+  - ls '%CPACK_PATH%'
+  #- set CPACK_PATH='C:\\Program Files (x86)\\CMake\\bin'
+  - '%CPACK_PATH%\\cpack.exe -G ZIP'
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
