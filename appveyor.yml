@@ -18,7 +18,7 @@ environment:
 build_script:
   - echo %PATH%
   - ls 'C:\\Program Files (x86)\\CMake\\bin'
-  - 'C:\\Program Files (x86)\\CMake\\bin\\cpack.exe -G ZIP'
+  - cmd: 'C:/Program Files (x86)/CMake/bin/cpack.exe -G ZIP'
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
