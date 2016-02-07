@@ -51,7 +51,10 @@ foreach(CompilerFlag ${CompilerFlags})
 endforeach()
 endif(WIN32)
 
-
+if(WIN32)
+    STRING(REGEX REPLACE "\\\\" "/" CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif(WIN32)
+MESSAGE(STATUS "will install files in ${CMAKE_INSTALL_PREFIX}")
 
 # Load the 'install_pkg_config_file' macro
 include(InstallPkgConfigFile)
@@ -116,6 +119,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_PACKAGE_VERSION_PATCH "12")
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "ibex-lib")
+set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 
 #set(CPACK_COMPONENTS_ALL applications CTData instructionData)
 #set(CPACK_COMPONENT_CTDATA_GROUP "data")
