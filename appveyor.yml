@@ -24,11 +24,14 @@ build_script:
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
+  - cpack -G ZIP
 
 
 artifacts:
 - path: build\ibex-lib*.exe
   name: ibex-lib
+- path: build\ibex-lib*.zip
+  name: ibex-lib-zip
 
 deploy:
   release: ibex-lib-v$(appveyor_build_version)
@@ -36,7 +39,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: kfuelei+usQrQv/IZnoepVAx6SU1E8BKoR6rXwXM3grYnvzBQM2P9xMKQ+Nc+BYr
-  artifact: ibex-lib
+  artifact: ibex-lib,ibex-lib-zip
   draft: true
   prerelease: false
   on:
