@@ -10,17 +10,12 @@ branches:
     - pyIbex_version_v3
 environment:
   matrix:
-    # - CMAKE_PLATFORM: "Visual Studio 14 2015"
-      # PYTHON_DIR: "C:\\Python34"
+    - CMAKE_PLATFORM: "Visual Studio 14 2015"
+      CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
     - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
-      # PYTHON_DIR: "C:\\Python34-x64"
 
 build_script:
-  - echo %PATH%
-  - ls '%CPACK_PATH%'
-  #- set CPACK_PATH='C:\\Program Files (x86)\\CMake\\bin'
-  - set PATH=%CPACK_PATH%;%PATH% # conflit with choco pack alias. need to put cpack.exe first
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
@@ -29,6 +24,7 @@ build_script:
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
+  - set PATH=%CPACK_PATH%;%PATH% # conflit with choco pack alias. need to put cpack.exe first
   - CPack.exe -G ZIP
 
 
