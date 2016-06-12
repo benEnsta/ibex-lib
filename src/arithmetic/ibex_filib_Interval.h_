@@ -402,7 +402,9 @@ inline Interval sqr(const Interval& x) {
 }
 
 inline Interval sqrt(const Interval& x) {
-	return filib::sqrt(x.itv);
+	Interval res(filib::sqrt(x.itv));
+	if (res.lb()<0) res &= Interval::POS_REALS;
+	return res;
 }
 
 inline Interval pow(const Interval& x, int n) {
@@ -514,11 +516,13 @@ inline Interval abs(const Interval &x) {
 }
 
 inline Interval max(const Interval& x, const Interval& y) {
-	return x.itv.imax(y.itv);
+	if (x.is_empty()||y.is_empty()) return Interval::EMPTY_SET;
+	else return x.itv.imax(y.itv);
 }
 
 inline Interval min(const Interval& x, const Interval& y) {
-	return x.itv.imin(y.itv);
+	if (x.is_empty()||y.is_empty()) return Interval::EMPTY_SET;
+	else return x.itv.imin(y.itv);
 }
 
 inline Interval integer(const Interval& x) {
