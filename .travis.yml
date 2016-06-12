@@ -6,12 +6,12 @@ compiler:
 
 before_script:
   - sudo apt-get update -q
-  - sudo apt-get install -y libcpptest-dev
+  - sudo apt-get install -y libcppunit-dev
   - mkdir build
   - cd build
   - cmake ..
 
-script: 
+script:
   - make
   - make test
   - sudo make install
