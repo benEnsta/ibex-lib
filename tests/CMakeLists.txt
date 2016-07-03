@@ -54,6 +54,7 @@ set(LIBS ${LIBS} cppunit)
 
 file(COPY quimper DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ../benchs DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY minibex DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 #endif(NOT WIN32)
 
 add_executable (utest ${Test_SRC})
