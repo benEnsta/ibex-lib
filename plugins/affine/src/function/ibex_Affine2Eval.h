@@ -12,8 +12,8 @@
 #define __IBEX_AFFINE2_EVAL_H__
 
 #include "ibex_Function.h"
+#include "ibex_Affine2Matrix.h"
 #include "ibex_Affine2Domain.h"
-#include "ibex_Affine2MatrixArray.h"
 #include "ibex_FwdAlgorithm.h"
 #include "ibex_ExprDomain.h"
 #include "ibex_NodeMap.h"
@@ -49,7 +49,8 @@ public:
 	 */
 	TemplateDomain<Affine2Main<T> >& eval(const Affine2MainVector<T>& af);
 
-	void index_fwd (int  x, int y);
+	void idx_fwd   (int  x, int y);
+	void idx_cp_fwd(int  x, int y);
 	void vector_fwd(int* x, int y);
 	void cst_fwd   (int y);
 	void symbol_fwd(int y);
@@ -188,7 +189,14 @@ inline void Affine2Eval<T>::forward(const Affine2MainVector<T>& box) {
 }
 
 template<class T>
-inline void Affine2Eval<T>::index_fwd(int, int ) { /* nothing to do */ }
+inline void Affine2Eval<T>::idx_fwd(int, int ) { /* nothing to do */ }
+
+template<class T>
+inline void Affine2Eval<T>::idx_cp_fwd(int x, int y) {
+	const ExprIndex& e = (const ExprIndex&) f.node(y);
+	af2[y] = af2[x][e.index];
+	d[y] = d[x][e.index];
+}
 
 template<class T>
 inline void Affine2Eval<T>::symbol_fwd(int) { /* nothing to do */ }
@@ -211,10 +219,6 @@ inline void Affine2Eval<T>::cst_fwd(int y) {
 	case Dim::MATRIX: {
 		af2[y].m() = Affine2MainMatrix<T>(c.get_matrix_value());
 		d[y].m() = c.get_matrix_value();
-		break;
-	}
-	case Dim::MATRIX_ARRAY:  {
-		assert(false); /* impossible */
 		break;
 	}
 	}
@@ -501,7 +505,6 @@ inline void Affine2Eval<T>::vector_fwd(int *x, int y) {
 	const ExprVector& v = (const ExprVector&) f.node(y);
 
 	assert(v.type()!=Dim::SCALAR);
-	assert(v.type()!=Dim::MATRIX_ARRAY);
 
 	if (v.dim.is_vector()) {
 		for (int i=0; i<v.length(); i++)  {
