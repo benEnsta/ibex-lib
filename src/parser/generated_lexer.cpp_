@@ -1,6 +1,3 @@
-#line 2 "/home/biop/Downloads/ibex-lib/build/src/lexer.cpp"
-
-#line 4 "/home/biop/Downloads/ibex-lib/build/src/lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -53,7 +50,7 @@
 #if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types. 
+ * if you want the limit (max/min) macros for int types.
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -70,7 +67,7 @@ typedef uint32_t flex_uint32_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t; 
+typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
@@ -196,7 +193,7 @@ extern FILE *ibexin, *ibexout;
 
     #define YY_LESS_LINENO(n)
     #define YY_LINENO_REWIND_TO(ptr)
-    
+
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
 	do \
@@ -253,7 +250,7 @@ struct yy_buffer_state
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-    
+
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
@@ -663,18 +660,21 @@ int ibex_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *ibextext;
-#line 1 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-#line 2 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 
 //============================================================================
-//                                  I B E X                                   
+//                                  I B E X
 // File        : Flex input for Ibex lexer
 // Author      : Gilles Chabert
 // Copyright   : Ecole des Mines de Nantes (France)
 // License     : See the LICENSE file
 // Created     : Jun 12, 2012
 // Last Update : Jun 12, 2012
-//============================================================================	
+//============================================================================
+
+// fix isatty call for MSVC
+#ifdef _WIN32
+#define isatty _isatty
+#endif
 
 #include "ibex_Scope.h"
 #include "ibex_Interval.h"
@@ -702,8 +702,6 @@ int ibex_lineno = 1;
 
 using namespace ibex;
 using namespace ibex::parser;
-
-#line 707 "/home/biop/Downloads/ibex-lib/build/src/lexer.cpp"
 
 #define INITIAL 0
 
@@ -763,9 +761,9 @@ extern int ibexwrap (void );
 #endif
 
 #ifndef YY_NO_UNPUT
-    
+
     static void yyunput (int c,char *buf_ptr  );
-    
+
 #endif
 
 #ifndef yytext_ptr
@@ -893,7 +891,7 @@ YY_DECL
 	yy_state_type yy_current_state;
 	char *yy_cp, *yy_bp;
 	int yy_act;
-    
+
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -921,18 +919,12 @@ YY_DECL
 		}
 
 	{
-#line 42 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-
-
 
   if (choco_start) {
     choco_start = false; // reinit
     /* return pseudo-start token (to avoid shift/reduce conflict) */
     return TK_CHOCO;
   }
-
-
-#line 936 "/home/biop/Downloads/ibex-lib/build/src/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -991,234 +983,191 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 52 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_CONST; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 53 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_VARS; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 54 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_PARAM; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 55 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_FUNCTION; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 56 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_MINIMIZE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 57 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_MAX; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 58 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_MIN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 59 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ATAN2; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 60 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_SIGN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 61 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ABS; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 62 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_EXPO; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 63 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_LOG; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 64 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_SQRT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 65 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_COS; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 66 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_SIN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 67 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_TAN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 68 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ACOS; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 69 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ASIN; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 70 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ATAN; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 71 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_COSH; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 72 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_SINH; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 73 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_TANH; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 74 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ACOSH; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 75 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ASINH; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 76 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ATANH; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 77 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_CHI; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 79 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_IN;  }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 80 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_INF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 81 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_MID; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 82 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_SUP; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 84 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_RETURN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 85 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_BEGIN; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 86 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_END;  }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 87 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_FOR;  }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 89 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_CTRS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 91 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-{ return TK_INFINITY; } 
+{ return TK_INFINITY; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 92 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { ibexlval.str = (char*) malloc(strlen(ibextext)-1);
                                    /* copy while removing quotes */
-                                   strncpy(ibexlval.str,&ibextext[1],strlen(ibextext)-2);   
+                                   strncpy(ibexlval.str,&ibextext[1],strlen(ibextext)-2);
                                    ibexlval.str[strlen(ibextext)-2]='\0';
-                                   return TK_STRING; 
+                                   return TK_STRING;
                                  }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 98 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { ibexlval.str = (char*) malloc(strlen(ibextext)+1);
                                    strcpy(ibexlval.str,ibextext);
-                                   return scopes().top().token(ibextext);				       
+                                   return scopes().top().token(ibextext);
                                  }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 102 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-{ 
-                                   ibexlval.real = atof(ibextext); return TK_FLOAT; 
+{
+                                   ibexlval.real = atof(ibextext); return TK_FLOAT;
                                  }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 105 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { // read a double from its exact hexadecimal representation
-                                   assert(sizeof(double)==8); 
+                                   assert(sizeof(double)==8);
                                    uint64_t u = strtoll(&ibextext[1],NULL,16); // note: we remove the '#' character
-                                   memcpy(&ibexlval.real, &u, 8);  
+                                   memcpy(&ibexlval.real, &u, 8);
                                    return TK_FLOAT;
-                                 }                                   
+                                 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 111 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { ibexlval.itg = atoi(ibextext); return TK_INTEGER; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 113 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { /* C++-like comments */ }
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 114 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-{ /* C-like comments */ 
+{ /* C-like comments */
                                    /*strtok (ibextext,"\n");
                                    while (strtok(NULL,"\n")) ++ibex_lineno; */
                                    char* s=ibextext;
@@ -1227,50 +1176,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 121 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { /* skipping spaces */ }
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 122 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { ++ibex_lineno; /* counting CR */ }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 124 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_LEQ; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 125 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_GEQ; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 126 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_EQU; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 127 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return TK_ASSIGN; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 128 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 { return ibextext [0]; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 129 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 {YY_NEW_FILE; yyterminate();}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 131 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1274 "/home/biop/Downloads/ibex-lib/build/src/lexer.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1547,7 +1486,7 @@ static int yy_get_next_buffer (void)
 {
 	yy_state_type yy_current_state;
 	char *yy_cp;
-    
+
 	yy_current_state = (yy_start);
 
 	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
@@ -1603,7 +1542,7 @@ static int yy_get_next_buffer (void)
     static void yyunput (int c, char * yy_bp )
 {
 	char *yy_cp;
-    
+
     yy_cp = (yy_c_buf_p);
 
 	/* undo effects of setting up ibextext */
@@ -1648,7 +1587,7 @@ static int yy_get_next_buffer (void)
 
 {
 	int c;
-    
+
 	*(yy_c_buf_p) = (yy_hold_char);
 
 	if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
@@ -1715,12 +1654,12 @@ static int yy_get_next_buffer (void)
 
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
- * 
+ *
  * @note This function does not reset the start condition to @c INITIAL .
  */
     void ibexrestart  (FILE * input_file )
 {
-    
+
 	if ( ! YY_CURRENT_BUFFER ){
         ibexensure_buffer_stack ();
 		YY_CURRENT_BUFFER_LVALUE =
@@ -1733,11 +1672,11 @@ static int yy_get_next_buffer (void)
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
- * 
+ *
  */
     void ibex_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )
 {
-    
+
 	/* TODO. We should be able to replace this entire function body
 	 * with
 	 *		ibexpop_buffer_state();
@@ -1777,13 +1716,13 @@ static void ibex_load_buffer_state  (void)
 /** Allocate and initialize an input buffer state.
  * @param file A readable stream.
  * @param size The character buffer size in bytes. When in doubt, use @c YY_BUF_SIZE.
- * 
+ *
  * @return the allocated buffer state.
  */
     YY_BUFFER_STATE ibex_create_buffer  (FILE * file, int  size )
 {
 	YY_BUFFER_STATE b;
-    
+
 	b = (YY_BUFFER_STATE) ibexalloc(sizeof( struct yy_buffer_state )  );
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in ibex_create_buffer()" );
@@ -1806,11 +1745,11 @@ static void ibex_load_buffer_state  (void)
 
 /** Destroy the buffer.
  * @param b a buffer created with ibex_create_buffer()
- * 
+ *
  */
     void ibex_delete_buffer (YY_BUFFER_STATE  b )
 {
-    
+
 	if ( ! b )
 		return;
 
@@ -1831,7 +1770,7 @@ static void ibex_load_buffer_state  (void)
 
 {
 	int oerrno = errno;
-    
+
 	ibex_flush_buffer(b );
 
 	b->yy_input_file = file;
@@ -1847,13 +1786,13 @@ static void ibex_load_buffer_state  (void)
     }
 
         b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
-    
+
 	errno = oerrno;
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
- * 
+ *
  */
     void ibex_flush_buffer (YY_BUFFER_STATE  b )
 {
@@ -1882,7 +1821,7 @@ static void ibex_load_buffer_state  (void)
  *  the current state. This function will allocate the stack
  *  if necessary.
  *  @param new_buffer The new state.
- *  
+ *
  */
 void ibexpush_buffer_state (YY_BUFFER_STATE new_buffer )
 {
@@ -1912,7 +1851,7 @@ void ibexpush_buffer_state (YY_BUFFER_STATE new_buffer )
 
 /** Removes and deletes the top of the stack, if present.
  *  The next element becomes the new top.
- *  
+ *
  */
 void ibexpop_buffer_state (void)
 {
@@ -1936,7 +1875,7 @@ void ibexpop_buffer_state (void)
 static void ibexensure_buffer_stack (void)
 {
 	yy_size_t num_to_alloc;
-    
+
 	if (!(yy_buffer_stack)) {
 
 		/* First allocation is just for 2 elements, since we don't know if this
@@ -1949,9 +1888,9 @@ static void ibexensure_buffer_stack (void)
 								);
 		if ( ! (yy_buffer_stack) )
 			YY_FATAL_ERROR( "out of dynamic memory in ibexensure_buffer_stack()" );
-								  
+
 		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
-				
+
 		(yy_buffer_stack_max) = num_to_alloc;
 		(yy_buffer_stack_top) = 0;
 		return;
@@ -1979,13 +1918,13 @@ static void ibexensure_buffer_stack (void)
 /** Setup the input buffer state to scan directly from a user-specified character buffer.
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
- * 
- * @return the newly allocated buffer state object. 
+ *
+ * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE ibex_scan_buffer  (char * base, yy_size_t  size )
 {
 	YY_BUFFER_STATE b;
-    
+
 	if ( size < 2 ||
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
@@ -2014,14 +1953,14 @@ YY_BUFFER_STATE ibex_scan_buffer  (char * base, yy_size_t  size )
 /** Setup the input buffer state to scan a string. The next call to ibexlex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
- * 
+ *
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
  *       ibex_scan_bytes() instead.
  */
 YY_BUFFER_STATE ibex_scan_string (yyconst char * yystr )
 {
-    
+
 	return ibex_scan_bytes(yystr,strlen(yystr) );
 }
 
@@ -2029,7 +1968,7 @@ YY_BUFFER_STATE ibex_scan_string (yyconst char * yystr )
  * scan from a @e copy of @a bytes.
  * @param yybytes the byte buffer to scan
  * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
- * 
+ *
  * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE ibex_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
@@ -2038,7 +1977,7 @@ YY_BUFFER_STATE ibex_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_le
 	char *buf;
 	yy_size_t n;
 	yy_size_t i;
-    
+
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
 	buf = (char *) ibexalloc(n  );
@@ -2092,16 +2031,16 @@ static void yy_fatal_error (yyconst char* msg )
 /* Accessor  methods (get/set functions) to struct members. */
 
 /** Get the current line number.
- * 
+ *
  */
 int ibexget_lineno  (void)
 {
-        
+
     return ibexlineno;
 }
 
 /** Get the input stream.
- * 
+ *
  */
 FILE *ibexget_in  (void)
 {
@@ -2109,7 +2048,7 @@ FILE *ibexget_in  (void)
 }
 
 /** Get the output stream.
- * 
+ *
  */
 FILE *ibexget_out  (void)
 {
@@ -2117,7 +2056,7 @@ FILE *ibexget_out  (void)
 }
 
 /** Get the length of the current token.
- * 
+ *
  */
 yy_size_t ibexget_leng  (void)
 {
@@ -2125,7 +2064,7 @@ yy_size_t ibexget_leng  (void)
 }
 
 /** Get the current token.
- * 
+ *
  */
 
 char *ibexget_text  (void)
@@ -2135,18 +2074,18 @@ char *ibexget_text  (void)
 
 /** Set the current line number.
  * @param _line_number line number
- * 
+ *
  */
 void ibexset_lineno (int  _line_number )
 {
-    
+
     ibexlineno = _line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
  * @param _in_str A readable stream.
- * 
+ *
  * @see ibex_switch_to_buffer
  */
 void ibexset_in (FILE *  _in_str )
@@ -2200,7 +2139,7 @@ static int yy_init_globals (void)
 /* ibexlex_destroy is for both reentrant and non-reentrant scanners. */
 int ibexlex_destroy  (void)
 {
-    
+
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
 		ibex_delete_buffer(YY_CURRENT_BUFFER  );
@@ -2226,7 +2165,7 @@ int ibexlex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-		
+
 	int i;
 	for ( i = 0; i < n; ++i )
 		s1[i] = s2[i];
@@ -2251,7 +2190,7 @@ void *ibexalloc (yy_size_t  size )
 
 void *ibexrealloc  (void * ptr, yy_size_t  size )
 {
-		
+
 	/* The cast to (char *) in the following accommodates both
 	 * implementations that use char* generic pointers, and those
 	 * that use void* generic pointers.  It works with the latter
@@ -2269,10 +2208,6 @@ void ibexfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 131 "/home/biop/Downloads/ibex-lib/src/parser/lexer.l"
-
-
-
 int ibexwrap () { return 1; }
 
 extern int ibexparse();
@@ -2285,15 +2220,15 @@ void ibexparse_string(const char* syntax) {
 	// But, then, if we instead parse a file (not a string) right after this
 	// call, a memory fault occurs because YY_CURRENT_BUFFER (which points
 	// to new_buff) has been destroyed.
-	// 
-	// I tried to save YY_CURRENT_BUFFER and restore its old value 
+	//
+	// I tried to save YY_CURRENT_BUFFER and restore its old value
 	// with ibex_switch_to_buffer(...) at the end, but it did not work.
-	
+
 	// So I force here deletion of YY_CURRENT_BUFFER
-	// and then recreate the buffer using ibexrestart(...) at the end. 
-	
+	// and then recreate the buffer using ibexrestart(...) at the end.
+
 	ibex_delete_buffer(YY_CURRENT_BUFFER);
-	
+
 	// copy string into a new buffer and switch buffers
 	YY_BUFFER_STATE new_buff = ibex_scan_string (syntax);
 
@@ -2309,14 +2244,13 @@ void ibexparse_string(const char* syntax) {
 
 	// delete the new buffer
 	ibex_delete_buffer(new_buff);
-		
-	// necessary, otherwise provokes a memory fault when another 
-	// file is read after (this fault does not occur if we parse a system 
+
+	// necessary, otherwise provokes a memory fault when another
+	// file is read after (this fault does not occur if we parse a system
 	// from a string again). I also tried to save YY_CURRENT_BUFFER
 	// and restore the old buffer with ibex_switch_to_buffer(...) but
-	// it did not work.  
+	// it did not work.
 	ibexrestart(stdin);
 }
 
 //"/""*"*([^*]|("*")+[^/])"*"*"/"    { /* C-like comments */ }
-

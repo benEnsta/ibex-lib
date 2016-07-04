@@ -4,29 +4,29 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
 )
 
-set( DIR_LIST 
-	arithmetic 
-	bisector 
-	combinatorial 
-	contractor 
-	function 
-	numeric 
-	geometry 
-	parser 
-	set 
-	strategy 
-	symbolic 
-	system 
-	tools 
-	predicate 
-	cliquer	
+set( DIR_LIST
+	arithmetic
+	bisector
+	combinatorial
+	contractor
+	function
+	numeric
+	geometry
+	parser
+	set
+	strategy
+	symbolic
+	system
+	tools
+	predicate
+	cliquer
 )
 
 if(WIN32)
 	add_definitions(-DYY_NO_UNISTD_H)
 endif(WIN32)
 
-# include all .cpp and .h  
+# include all .cpp and .h
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 foreach( dir ${DIR_LIST})
@@ -42,11 +42,11 @@ set(HEADERS ${HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h)
 
 set(dir ${CMAKE_CURRENT_SOURCE_DIR}/parser)
 if(GENERATE_PARSER_FILES)
-	# using flex/bison generate parser.cpp file 
+	# using flex/bison generate parser.cpp file
 	find_package(BISON)
-	find_package(FLEX)  
+	find_package(FLEX)
 	set(SRCS ${SRCS} ${dir}/parser.cpp_ )
-	FLEX_TARGET(Lexer ${dir}/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS "-Pibex")
+	FLEX_TARGET(Lexer ${dir}/lexer.l  ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS "-Pibex --noline")
 	BISON_TARGET(Parser ${dir}/parser.yc ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp COMPILE_FLAGS "--name-prefix=ibex --report=all --file-prefix=parser")
 	ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 	set(SRCS ${SRCS} ${BISON_Parser_OUTPUTS} ${FLEX_Lexer_OUTPUTS})
@@ -106,7 +106,7 @@ install_pkg_config_file(ibex
 	DESCRIPTION "A C++ library for interval-based algorithm design"
 	CFLAGS "-I\${includedir}/ibex  -frounding-math -ffloat-store"
 	LIBS "-libex -lClp -lCoinUtils -lz -lm -lprim"
-	REQUIRES 
+	REQUIRES
 	VERSION ${PACKAGE_VERSION}
 )
 #if(BUILD_SHARED_LIBS)
@@ -125,4 +125,3 @@ install_pkg_config_file(ibex
 #)
 #file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/ibex.h)
 #add_custom_target(gen_header ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ibex.h )
-
