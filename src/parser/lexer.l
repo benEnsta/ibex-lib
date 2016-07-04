@@ -12,7 +12,9 @@
 
 // fix isatty call for MSVC
 #ifdef _WIN32
+#include <io.h>
 #define isatty _isatty
+#define YY_NO_UNISTD_H
 #endif
 
 #include "ibex_Scope.h"
