@@ -7,7 +7,7 @@ configuration:
     # - Debug
 branches:
   only:
-    - pyIbex_version_4
+    - with_cmake
 environment:
   matrix:
     - CMAKE_PLATFORM: "Visual Studio 14 2015"
@@ -44,5 +44,5 @@ deploy:
   draft: true
   prerelease: false
   on:
-    branch: pyIbex_version_4      # release from master branch only
+    branch: with_cmake      # release from master branch only
     appveyor_repo_tag: false        # deploy on tag push only
