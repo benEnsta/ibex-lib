@@ -25,7 +25,7 @@ else(WITH_CLP)
 	set(_IBEX_WITH_NOLP_ "1")
 endif(WITH_CLP)
 # set(_IBEX_WITH_CXSC_ "1")
-include(CheckCXXCompilerFlag)	
+include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-fPIC SUPPORT_FPIC)
 if(SUPPORT_FPIC)
 	set(CMAKE_CXX_FLAGS ${CMAKE_CSS_FLAGS} "-fPIC")
@@ -68,23 +68,23 @@ endif("${isSystemDir}" STREQUAL "-1")
 
 # if(WITH_FILIB)
 	# if( NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
-		execute_process(
-			COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc-3.0.2.2.tar.gz
-			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rd
-		)
+	execute_process(
+		COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc-3.0.2.2.tar.gz -C ${CMAKE_CURRENT_BINARY_DIR}
+		#WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rd
+	)
 	# endif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/filib_config.h.in 
-			${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc/config.h.in COPYONLY
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/filib_config.h.in
+			${CMAKE_CURRENT_BINARY_DIR}/filibsrc/config.h.in COPYONLY
 	)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/filib_CMakeLists.txt.in
-			${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc/CMakeLists.txt COPYONLY
+			${CMAKE_CURRENT_BINARY_DIR}/filibsrc/CMakeLists.txt COPYONLY
 	)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/filib_rounding_control_config.hpp.in
-			${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc/rounding_control/rounding_control_config.hpp.in COPYONLY
+			${CMAKE_CURRENT_BINARY_DIR}/filibsrc/rounding_control/rounding_control_config.hpp.in COPYONLY
 	)
 
-	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
+	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/filibsrc)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/filibsrc)
 # endif(WITH_FILIB)
 
 add_subdirectory(src)
