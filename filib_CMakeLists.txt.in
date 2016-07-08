@@ -17,7 +17,6 @@ set(PACKAGE_URL \"\")
 set(PACKAGE_VERSION \"\")
 set(VERSION \"3.0.2\")
 
-set(HAVE_SSE "1")
 message(STATUS "Checking whether system has ANSI C header files")
 include(CheckIncludeFiles)
 check_include_files("dlfcn.h;stdint.h;inttypes.h;stdlib.h;strings.h;string.h;memory.h;sys/stat.h;sys/types.h" StandardHeadersExist)
@@ -40,25 +39,49 @@ if(NOT STDC_HEADERS)
 	set(STDC_HEADERS 0 CACHE INTERNAL "System has ANSI C header files")
 endif(NOT STDC_HEADERS)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/rounding_control/rounding_control_config.hpp.in 
-	${CMAKE_CURRENT_SOURCE_DIR}/rounding_control/rounding_control_config.hpp
-)
+
+# set(CMAKE_HOST_SYSTEM_PROCESSOR "i386")
+MESSAGE(STATUS "Using architecture:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
+
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-frounding-math SUPPORT_FROUNDING_MATH)
-if(SUPPORT_FROUNDING_MATH)
-	set(CXXFLAGS ${CXXFLAGS} "-frounding-math")
-endif(SUPPORT_FROUNDING_MATH)
-
 check_cxx_compiler_flag(-ffloat-store SUPPORT_FFLOAT_STORE)
-if(SUPPORT_FFLOAT_STORE)
-	set(CXXFLAGS ${CXXFLAGS} "-ffloat-store")
-endif(SUPPORT_FFLOAT_STORE)
+# option(HAVE_SSE OFF)
+# option(HAVE_X87 OFF)
+if(${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+	set(HAVE_SSE ON)
+	if(SUPPORT_FROUNDING_MATH)
+		set(ITV_LIB_FLAGS "${ITV_LIB_FLAGS} -frounding-math")
+	endif(SUPPORT_FROUNDING_MATH)
 
-check_cxx_compiler_flag(-fPIC SUPPORT_FPIC)
-if(SUPPORT_FPIC)
-	set(CMAKE_CXX_FLAGS ${CMAKE_CSS_FLAGS} "-fPIC")
-endif(SUPPORT_FPIC)
+else()
+	if(${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "i686")
+		set(ITV_LIB_FLAGS "${ITV_LIB_FLAGS} -msse -march=pentium4")
+	endif()
+	set(HAVE_X87 ON)
+	if(SUPPORT_FROUNDING_MATH)
+		set(ITV_LIB_FLAGS "${ITV_LIB_FLAGS} -frounding-math")
+	endif(SUPPORT_FROUNDING_MATH)
+
+	if(SUPPORT_FFLOAT_STORE)
+		set(ITV_LIB_FLAGS "${ITV_LIB_FLAGS} -ffloat-store")
+	endif(SUPPORT_FFLOAT_STORE)
+endif()
+
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/rounding_control/rounding_control_config.hpp.in
+	${CMAKE_CURRENT_SOURCE_DIR}/rounding_control/rounding_control_config.hpp
+)
+
+set(ITV_LIB_FLAGS ${ITV_LIB_FLAGS} PARENT_SCOPE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ITV_LIB_FLAGS}")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} PARENT_SCOPE)
+
+# check_cxx_compiler_flag(-fPIC SUPPORT_FPIC)
+# if(SUPPORT_FPIC)
+# 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fPIC")
+# endif(SUPPORT_FPIC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -77,4 +100,3 @@ install(DIRECTORY rounding_control DESTINATION include FILES_MATCHING PATTERN "*
 add_library(prim ${SRCS} ${HEADERS})
 
 install(TARGETS prim DESTINATION lib)
-

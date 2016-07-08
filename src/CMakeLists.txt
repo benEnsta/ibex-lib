@@ -102,10 +102,18 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/ibex.h DESTINATION include/ibe
 
 
 
+# extract compiled option
+
+set(USED_LIB "-libex -lprim -lm")
+if(WITH_CLP)
+  set(USED_LIB "${USED_LIB} -lClp -lCoinUtils -lz")
+endif()
+
+
 install_pkg_config_file(ibex
 	DESCRIPTION "A C++ library for interval-based algorithm design"
-	CFLAGS "-I\${includedir}/ibex  -frounding-math -ffloat-store"
-	LIBS "-libex -lClp -lCoinUtils -lz -lm -lprim"
+	CFLAGS "-I\${includedir}/ibex  ${ITV_LIB_FLAGS}"
+	LIBS ${USED_LIB}
 	REQUIRES
 	VERSION ${PACKAGE_VERSION}
 )
