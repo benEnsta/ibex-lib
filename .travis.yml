@@ -13,5 +13,5 @@ before_script:
 
 script:
   - make
-  - make test
+  - make test ARGS="-VV"
   - sudo make install
