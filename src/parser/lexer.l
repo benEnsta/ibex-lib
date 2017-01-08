@@ -93,31 +93,31 @@ using namespace ibex::parser;
 "for"|"For"|"FOR"                { return TK_FOR;  }
 
 "constraints"|"Constraints"|"CONSTRAINTS" { return TK_CTRS; }
- 
-"oo"                             { return TK_INFINITY; } 
-"\""[^\n]*"\""                   { ibexlval.str = (char*) malloc(strlen(ibextext)-1);
+
+"oo"                             { return TK_INFINITY; }
+"\""[^\n\r]*"\""                 { ibexlval.str = (char*) malloc(strlen(ibextext)-1);
                                    /* copy while removing quotes */
-                                   strncpy(ibexlval.str,&ibextext[1],strlen(ibextext)-2);   
+                                   strncpy(ibexlval.str,&ibextext[1],strlen(ibextext)-2);
                                    ibexlval.str[strlen(ibextext)-2]='\0';
-                                   return TK_STRING; 
+                                   return TK_STRING;
                                  }
 [_a-zA-Z][_a-zA-Z0-9]*	         { ibexlval.str = (char*) malloc(strlen(ibextext)+1);
                                    strcpy(ibexlval.str,ibextext);
-                                   return scopes().top().token(ibextext);				       
+                                   return scopes().top().token(ibextext);
                                  }
-([0-9]{6,10}[0-9]*|([0-9][0-9]*\.[0-9]*)|(\.[0-9]+))(e(\-|\+)?[0-9]+)?|([0-9]{1,5}e(\-|\+)?[0-9]+)  { 
-                                   ibexlval.real = atof(ibextext); return TK_FLOAT; 
+([0-9]{6,10}[0-9]*|([0-9][0-9]*\.[0-9]*)|(\.[0-9]+))(e(\-|\+)?[0-9]+)?|([0-9]{1,5}e(\-|\+)?[0-9]+)  {
+                                   ibexlval.real = atof(ibextext); return TK_FLOAT;
                                  }
 #[0-9a-fA-F]+                    { // read a double from its exact hexadecimal representation
-                                   assert(sizeof(double)==8); 
+                                   assert(sizeof(double)==8);
                                    uint64_t u = strtoll(&ibextext[1],NULL,16); // note: we remove the '#' character
-                                   memcpy(&ibexlval.real, &u, 8);  
+                                   memcpy(&ibexlval.real, &u, 8);
                                    return TK_FLOAT;
-                                 }                                   
+                                 }
 [0-9]+                           { ibexlval.itg = atoi(ibextext); return TK_INTEGER; }
 
-"//".*                           { /* C++-like comments */ }
-"/*"([^*]|("*"[^/]))*"*/"        { /* C-like comments */ 
+"//"[^\n\r]*                     { /* C++-like comments. Note: '.' also accepts CR characters (not LF).*/ }
+"/*"([^*]|("*"[^/]))*"*/"        { /* C-like comments */
                                    /*strtok (ibextext,"\n");
                                    while (strtok(NULL,"\n")) ++ibex_lineno; */
                                    char* s=ibextext;
@@ -125,7 +125,10 @@ using namespace ibex::parser;
                                  }
 
 [ \t]+                           { /* skipping spaces */ }
-"\n"                             { ++ibex_lineno; /* counting CR */ }
+
+\n|\r|"\r\n"                     { ++ibex_lineno; /* counting end of lines (either CR, LF or CRLF depending on the encoding) */
+					               /* the line count is OK if different conventions are not mixed in the same file (should be ok). */
+}
 
 "<="                             { return TK_LEQ; }
 ">="                             { return TK_GEQ; }
@@ -148,15 +151,15 @@ void ibexparse_string(const char* syntax) {
 	// But, then, if we instead parse a file (not a string) right after this
 	// call, a memory fault occurs because YY_CURRENT_BUFFER (which points
 	// to new_buff) has been destroyed.
-	// 
-	// I tried to save YY_CURRENT_BUFFER and restore its old value 
+	//
+	// I tried to save YY_CURRENT_BUFFER and restore its old value
 	// with ibex_switch_to_buffer(...) at the end, but it did not work.
-	
+
 	// So I force here deletion of YY_CURRENT_BUFFER
-	// and then recreate the buffer using ibexrestart(...) at the end. 
-	
+	// and then recreate the buffer using ibexrestart(...) at the end.
+
 	ibex_delete_buffer(YY_CURRENT_BUFFER);
-	
+
 	// copy string into a new buffer and switch buffers
 	YY_BUFFER_STATE new_buff = ibex_scan_string (syntax);
 
@@ -172,12 +175,12 @@ void ibexparse_string(const char* syntax) {
 
 	// delete the new buffer
 	ibex_delete_buffer(new_buff);
-		
-	// necessary, otherwise provokes a memory fault when another 
-	// file is read after (this fault does not occur if we parse a system 
+
+	// necessary, otherwise provokes a memory fault when another
+	// file is read after (this fault does not occur if we parse a system
 	// from a string again). I also tried to save YY_CURRENT_BUFFER
 	// and restore the old buffer with ibex_switch_to_buffer(...) but
-	// it did not work.  
+	// it did not work.
 	ibexrestart(stdin);
 }
 

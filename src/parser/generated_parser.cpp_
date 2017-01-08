@@ -70,10 +70,9 @@
 #define yychar          ibexchar
 
 /* Copy the first part of user declarations.  */
-#line 1 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:339  */
 
 //============================================================================
-//                                  I B E X                                   
+//                                  I B E X
 // File        : Yacc/Bison input for Ibex parser
 // Author      : Gilles Chabert
 // Copyright   : Ecole des Mines de Nantes (France)
@@ -85,7 +84,6 @@
 #include "parser.cpp_"
 
 
-#line 89 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -184,16 +182,15 @@ extern int ibexdebug;
 
 union YYSTYPE
 {
-#line 16 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:355  */
 
   char*     str;
   int       itg;
   double    real;
-  
+
   ibex::Interval* itv;
-  
+
   ibex::Dim*      dim;
-  
+
   ibex::parser::P_NumConstraint*                constraint;
   std::vector<ibex::parser::P_NumConstraint*>*  constraints;
 
@@ -201,7 +198,6 @@ union YYSTYPE
   std::vector<const ibex::parser::P_ExprNode*>* expressions;
 
 
-#line 205 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -218,7 +214,6 @@ int ibexparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 222 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -524,15 +519,15 @@ static const yytype_uint16 yyrline[] =
        0,    88,    88,    88,    90,    90,    92,    92,    98,   105,
      112,   113,   114,   117,   118,   121,   125,   130,   131,   132,
      135,   137,   142,   143,   145,   149,   157,   158,   161,   161,
-     175,   175,   177,   178,   181,   185,   186,   189,   191,   199,
-     200,   207,   208,   211,   214,   215,   219,   220,   225,   224,
-     233,   234,   235,   236,   237,   238,   245,   246,   247,   248,
-     249,   250,   251,   252,   253,   254,   255,   256,   257,   258,
-     259,   260,   261,   262,   263,   264,   265,   266,   267,   268,
-     269,   270,   271,   273,   274,   275,   276,   277,   278,   279,
-     281,   282,   283,   284,   285,   286,   287,   288,   289,   290,
-     291,   292,   293,   294,   295,   296,   297,   300,   301,   305,
-     306,   310,   311,   312
+     176,   176,   178,   179,   182,   186,   187,   190,   192,   200,
+     201,   208,   209,   212,   215,   216,   220,   221,   226,   225,
+     234,   235,   236,   237,   238,   239,   246,   247,   248,   249,
+     250,   251,   252,   253,   254,   255,   256,   257,   258,   259,
+     260,   261,   262,   263,   264,   265,   266,   267,   268,   269,
+     270,   271,   272,   274,   275,   276,   277,   278,   279,   280,
+     282,   283,   284,   285,   286,   287,   288,   289,   290,   291,
+     292,   293,   294,   295,   296,   297,   298,   301,   302,   306,
+     307,   311,   312,   313
 };
 #endif
 
@@ -1598,582 +1593,398 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 88 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { begin_system(); }
-#line 1604 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 89 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { end_system(); }
-#line 1610 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 90 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { begin_choco(); }
-#line 1616 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 91 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { end_choco(); }
-#line 1622 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 92 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { begin_function(); }
-#line 1628 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 93 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { end_function(); }
-#line 1634 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 122 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { scopes().top().add_cst((yyvsp[-3].str), (yyvsp[-2].dim), (yyvsp[0].expression)->_2domain()); 
+    { scopes().top().add_cst((yyvsp[-3].str), (yyvsp[-2].dim), (yyvsp[0].expression)->_2domain());
                                                   free((yyvsp[-3].str)); delete (yyvsp[-2].dim); delete (yyvsp[0].expression); }
-#line 1641 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 126 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { scopes().top().add_cst((yyvsp[-3].str), (yyvsp[-2].dim), (yyvsp[0].expression)->_2domain()); 
+    { scopes().top().add_cst((yyvsp[-3].str), (yyvsp[-2].dim), (yyvsp[0].expression)->_2domain());
                                                   free((yyvsp[-3].str)); delete (yyvsp[-2].dim); delete (yyvsp[0].expression); }
-#line 1648 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 135 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { scopes().top().add_var((yyvsp[-1].str),(yyvsp[0].dim));  
+    { scopes().top().add_var((yyvsp[-1].str),(yyvsp[0].dim));
 		                                          free((yyvsp[-1].str)); delete (yyvsp[0].dim); }
-#line 1655 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 138 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { scopes().top().add_var((yyvsp[-3].str),(yyvsp[-2].dim),(yyvsp[0].expression)->_2domain()); 
+    { scopes().top().add_var((yyvsp[-3].str),(yyvsp[-2].dim),(yyvsp[0].expression)->_2domain());
 						                          free((yyvsp[-3].str)); delete (yyvsp[-2].dim); delete (yyvsp[0].expression); }
-#line 1662 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 142 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.dim)=new Dim(); }
-#line 1668 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 143 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.dim)=new Dim(Dim::col_vec((yyvsp[-1].expression)->_2int())); 
+    { (yyval.dim)=new Dim(Dim::col_vec((yyvsp[-1].expression)->_2int()));
                                                   delete (yyvsp[-1].expression);  }
-#line 1675 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 145 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.dim)=new Dim(Dim::matrix((yyvsp[-4].expression)->_2int(),(yyvsp[-1].expression)->_2int())); 
+    { (yyval.dim)=new Dim(Dim::matrix((yyvsp[-4].expression)->_2int(),(yyvsp[-1].expression)->_2int()));
                                                   delete (yyvsp[-4].expression); delete (yyvsp[-1].expression); }
-#line 1682 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 149 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.itv)=new Interval((yyvsp[-3].expression)->_2dbl(), (yyvsp[-1].expression)->_2dbl()); 
+    { (yyval.itv)=new Interval((yyvsp[-3].expression)->_2dbl(), (yyvsp[-1].expression)->_2dbl());
                                                   delete (yyvsp[-3].expression); delete (yyvsp[-1].expression); }
-#line 1689 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 161 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { scopes().push(Scope(scopes().top(),true)); }
-#line 1695 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 166 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { 
-                								  Function* f=new Function(scopes().top().var_symbols(),(yyvsp[-2].expression)->generate(),(yyvsp[-8].str));        
+    {
+                								  // TODO: simplify the expression (beware of constants that should be "locked")
+                								  Function* f=new Function(scopes().top().var_symbols(),(yyvsp[-2].expression)->generate(),(yyvsp[-8].str));
                                                   scopes().pop();
                                                   scopes().top().add_func((yyvsp[-8].str),f);
                                                   source().func.push_back(f);
                                                   free((yyvsp[-8].str)); delete (yyvsp[-2].expression);
                                                  }
-#line 1707 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 181 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { scopes().top().add_var((yyvsp[-1].str),(yyvsp[0].dim));
                                                   free((yyvsp[-1].str)); delete (yyvsp[0].dim); }
-#line 1714 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 189 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { /* TODO: if this tmp symbol is not used, the expr $3 will never be deleted */
                                                   scopes().top().add_func_tmp_symbol((yyvsp[-2].str),(yyvsp[0].expression)); free((yyvsp[-2].str)); }
-#line 1721 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 191 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { cerr << "Warning: line " << ibex_lineno << ", local variable " << (yyvsp[-2].str) << " shadows the constant of the same name\n"; 
+    { cerr << "Warning: line " << ibex_lineno << ", local variable " << (yyvsp[-2].str) << " shadows the constant of the same name\n";
                                                   scopes().top().rem_cst((yyvsp[-2].str));
                                                   scopes().top().add_func_tmp_symbol((yyvsp[-2].str),(yyvsp[0].expression)); free((yyvsp[-2].str)); }
-#line 1729 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 199 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { source().goal = NULL; }
-#line 1735 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 200 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { source().goal = (yyvsp[-1].expression); }
-#line 1741 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 211 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { source().ctrs=new P_ConstraintList((yyvsp[-1].constraints)); }
-#line 1747 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 214 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyvsp[-2].constraints)->push_back((yyvsp[0].constraint)); (yyval.constraints) = (yyvsp[-2].constraints); }
-#line 1753 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 215 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraints) = new vector<P_NumConstraint*>();
               								      (yyval.constraints)->push_back((yyvsp[0].constraint)); }
-#line 1760 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 219 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = (yyvsp[0].constraint); }
-#line 1766 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 220 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = (yyvsp[0].constraint); }
-#line 1772 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 225 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { scopes().push(scopes().top());
 						       					 scopes().top().add_iterator((yyvsp[-5].str)); }
-#line 1779 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 228 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.constraint) = new P_ConstraintLoop((yyvsp[-9].str), (yyvsp[-7].expression), (yyvsp[-5].expression), (yyvsp[-2].constraints)); 
+    { (yyval.constraint) = new P_ConstraintLoop((yyvsp[-9].str), (yyvsp[-7].expression), (yyvsp[-5].expression), (yyvsp[-2].constraints));
 						                          scopes().pop();
 		                                          free((yyvsp[-9].str)); }
-#line 1787 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 233 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = new P_OneConstraint((yyvsp[-2].expression),EQ,(yyvsp[0].expression)); }
-#line 1793 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 234 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = new P_OneConstraint((yyvsp[-2].expression),LEQ,(yyvsp[0].expression)); }
-#line 1799 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 235 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = new P_OneConstraint((yyvsp[-2].expression),GEQ,(yyvsp[0].expression)); }
-#line 1805 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 236 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = new P_OneConstraint((yyvsp[-2].expression),LT,(yyvsp[0].expression)); }
-#line 1811 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 237 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = new P_OneConstraint((yyvsp[-2].expression),GT,(yyvsp[0].expression)); }
-#line 1817 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 238 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.constraint) = (yyvsp[-1].constraint); }
-#line 1823 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 245 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = *(yyvsp[-2].expression) + *(yyvsp[0].expression);     }
-#line 1829 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 246 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = *(yyvsp[-2].expression) * *(yyvsp[0].expression);     }
-#line 1835 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 247 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = *(yyvsp[-2].expression) - *(yyvsp[0].expression);     }
-#line 1841 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 248 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = *(yyvsp[-2].expression) / *(yyvsp[0].expression);     }
-#line 1847 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 249 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = max((yyvsp[-1].expressions));       }
-#line 1853 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 250 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = min((yyvsp[-1].expressions));       }
-#line 1859 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 251 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = atan2((yyvsp[-3].expression),(yyvsp[-1].expression));  }
-#line 1865 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 252 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = -*(yyvsp[0].expression);          }
-#line 1871 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 253 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = abs  ((yyvsp[-1].expression));     }
-#line 1877 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 254 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = sign ((yyvsp[-1].expression));     }
-#line 1883 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 255 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = transpose((yyvsp[-1].expression)); }
-#line 1889 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 256 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = sqrt ((yyvsp[-1].expression));     }
-#line 1895 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 257 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = exp  ((yyvsp[-1].expression));     }
-#line 1901 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 258 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = log  ((yyvsp[-1].expression));     }
-#line 1907 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 259 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = cos  ((yyvsp[-1].expression));     }
-#line 1913 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 260 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = sin  ((yyvsp[-1].expression));     }
-#line 1919 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 261 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = tan  ((yyvsp[-1].expression));     }
-#line 1925 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 262 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = acos ((yyvsp[-1].expression));     }
-#line 1931 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 263 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = asin ((yyvsp[-1].expression));     }
-#line 1937 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 264 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = atan ((yyvsp[-1].expression));     }
-#line 1943 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 265 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = cosh ((yyvsp[-1].expression));     }
-#line 1949 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 266 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = sinh ((yyvsp[-1].expression));     }
-#line 1955 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 267 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = tanh ((yyvsp[-1].expression));     }
-#line 1961 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 268 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = acosh((yyvsp[-1].expression));     }
-#line 1967 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 269 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = asinh((yyvsp[-1].expression));     }
-#line 1973 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 270 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = atanh((yyvsp[-1].expression));     }
-#line 1979 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 272 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = chi((yyvsp[-5].expression),(yyvsp[-3].expression),(yyvsp[-1].expression)); }
-#line 1985 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 273 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = (yyvsp[0].expression); }
-#line 1991 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 274 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = (yyvsp[-1].expression); }
-#line 1997 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 275 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprConstant(ball((yyvsp[-3].expression)->_2domain(),(yyvsp[-1].expression)->_2dbl())); }
-#line 2003 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 276 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = pow((yyvsp[-2].expression), (yyvsp[0].expression)); }
-#line 2009 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 277 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = expr_with_index((yyvsp[-3].expression),(yyvsp[-1].expression),false);  }
-#line 2015 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 278 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = expr_with_index((yyvsp[-3].expression),(yyvsp[-1].expression),true); }
-#line 2021 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 280 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = expr_with_index((yyvsp[-5].expression),(yyvsp[-3].expression),(yyvsp[-1].expression),true); }
-#line 2027 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 281 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = row_vec((yyvsp[-1].expressions)); delete (yyvsp[-1].expressions); }
-#line 2033 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 282 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = col_vec((yyvsp[-1].expressions)); delete (yyvsp[-1].expressions); }
-#line 2039 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 283 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprVarSymbol((yyvsp[0].str)); free((yyvsp[0].str)); /* cannot happen inside a function expr */}
-#line 2045 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 284 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprVarSymbol(scopes().top().var((yyvsp[-1].itg)));   /* CHOCO variable symbols */ }
-#line 2051 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 285 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprIter((yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 2057 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 286 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprTmpSymbol((yyvsp[0].str)); free((yyvsp[0].str)); /* not this (to avoid DAG!) ---> &scopes().top().get_func_tmp_expr($1); */ }
-#line 2063 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 287 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprCstSymbol((yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 2069 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 288 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = apply(scopes().top().get_func((yyvsp[-3].str)), *(yyvsp[-1].expression)); free((yyvsp[-3].str)); }
-#line 2075 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 289 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = apply(scopes().top().get_func((yyvsp[-3].str)), *(yyvsp[-1].expressions)); free((yyvsp[-3].str)); delete (yyvsp[-1].expressions); }
-#line 2081 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 290 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { ibexerror("unknown symbol"); }
-#line 2087 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 291 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprConstant((yyvsp[0].real)); }
-#line 2093 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 292 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = infinity(); }
-#line 2099 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 293 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprConstant((yyvsp[0].itg)); }
-#line 2105 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 294 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = new P_ExprConstant(*(yyvsp[0].itv)); delete (yyvsp[0].itv); }
-#line 2111 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 295 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = inf((yyvsp[-1].expression)); }
-#line 2117 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 296 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = mid((yyvsp[-1].expression)); }
-#line 2123 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 297 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = sup((yyvsp[-1].expression)); }
-#line 2129 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 300 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyvsp[-2].expressions)->push_back((yyvsp[0].expression)); (yyval.expressions)=(yyvsp[-2].expressions); }
-#line 2135 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 301 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.expressions) = new vector<const P_ExprNode*>(); 
+    { (yyval.expressions) = new vector<const P_ExprNode*>();
                                                   (yyval.expressions)->push_back((yyvsp[-2].expression)); (yyval.expressions)->push_back((yyvsp[0].expression)); }
-#line 2142 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 305 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyvsp[-2].expressions)->push_back((yyvsp[0].expression)); (yyval.expressions)=(yyvsp[-2].expressions); }
-#line 2148 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 306 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
-    { (yyval.expressions) = new vector<const P_ExprNode*>(); 
+    { (yyval.expressions) = new vector<const P_ExprNode*>();
                                                   (yyval.expressions)->push_back((yyvsp[-2].expression)); (yyval.expressions)->push_back((yyvsp[0].expression)); }
-#line 2155 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 310 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = index_all(); }
-#line 2161 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 311 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = index((yyvsp[0].expression)); }
-#line 2167 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 312 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1646  */
     { (yyval.expression) = index_range((yyvsp[-2].expression),(yyvsp[0].expression)); }
-#line 2173 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 2177 "/home/biop/Downloads/ibex-lib/build/src/parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
