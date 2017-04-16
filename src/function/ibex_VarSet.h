@@ -10,10 +10,12 @@
 #ifndef __IBEX_VAR_SET_H__
 #define __IBEX_VAR_SET_H__
 
-#include "ibex_Function.h"
 #include "ibex_BitSet.h"
 
 namespace ibex {
+
+class Function;
+class ExprNode;
 
 /**
  * \ingroup function
@@ -104,9 +106,14 @@ public:
 	VarSet(Function& f, const Array<const ExprNode>& x, bool var=true);
 
 	/**
+	 * \brief Create the set of variables (or parameters) x[0],...
+	 */
+	VarSet(Function& f, const Array<const ExprSymbol>& x, bool var=true);
+
+	/**
 	 * \brief Create a set of variables (or parameters) from a bitset
 	 *
-	 * \param total  The number of variables and parameters (sum)
+	 * \param total - The number of variables and parameters (sum)
 	 *
 	 * x[i]==true <=> the ith component is a variable (if var is "true") or a parameter (if var is "false")
 	 */

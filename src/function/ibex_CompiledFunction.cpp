@@ -13,9 +13,9 @@
 #include "ibex_Function.h"
 #include "ibex_ExprData.h"
 #include <algorithm>
+#include <list>
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 namespace ibex {
 
@@ -42,7 +42,6 @@ void CompiledFunction::compile(Function& f) {
 	for (ptr=n-1; ptr>=0; ptr--) {
 		(*nodes)[ptr].acceptVisitor(*this);
 	}
-
 	//cout << f.name << " : n=" << n << " nb_args[" << 0 << "]=" << nb_args[0] << endl;
 }
 
@@ -53,6 +52,17 @@ CompiledFunction::~CompiledFunction() {
 	for (int i=0; i<n; i++) delete[] args[i];
 	delete[] args;
 	delete[] nb_args;
+}
+
+Agenda* CompiledFunction::agenda(int rank) const {
+	ExprSubNodes rank_nodes((*nodes)[rank]);
+	Agenda* a=new Agenda(n);
+
+	for (int i=0; i<rank_nodes.size(); i++) {
+		a->push(nodes->rank(rank_nodes[i]));
+	}
+
+	return a;
 }
 
 void CompiledFunction::visit(const ExprNode& e) {

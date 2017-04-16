@@ -7,7 +7,8 @@
 // Created     : Sep 1, 2015
 //============================================================================
 
-#include "ibex_VarSet.h"
+#include "ibex_Function.h"
+
 #include <sstream>
 
 using namespace std;
@@ -76,6 +77,11 @@ VarSet::VarSet(Function& f, const ExprNode& x1, const ExprNode& x2, const ExprNo
 
 VarSet::VarSet(Function& f, const Array<const ExprNode>& y, bool var) : nb_var(-1), nb_param(-1) {
 	init_bitset(f, y, var);
+	init_arrays();
+}
+
+VarSet::VarSet(Function& f, const Array<const ExprSymbol>& y, bool var) : nb_var(-1), nb_param(-1) {
+	init_bitset(f, (const Array<const ExprNode>&) y, var);
 	init_arrays();
 }
 
