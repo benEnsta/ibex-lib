@@ -109,7 +109,6 @@ extern int ibexdebug;
 
 union YYSTYPE
 {
-#line 16 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1909  */
 
   char*     str;
   int       itg;
@@ -126,7 +125,6 @@ union YYSTYPE
   std::vector<const ibex::parser::P_ExprNode*>* expressions;
 
 
-#line 130 "/home/biop/Downloads/ibex-lib/build/src/parser.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

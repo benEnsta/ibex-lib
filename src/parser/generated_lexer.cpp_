@@ -1141,7 +1141,13 @@ case 38:
 YY_RULE_SETUP
 { ibexlval.str = (char*) malloc(strlen(ibextext)+1);
                                    strcpy(ibexlval.str,ibextext);
-                                   return scopes().top().token(ibextext);
+                                   if (scopes().empty())
+                                      // happens when the program starts by an identifier (an error). 
+  									  // The lexer tries to retreive this identifier from the scope, which has not
+  									  // been created yet -> seg fault
+  									  return TK_NEW_SYMBOL;
+  								   else
+                                      return scopes().top().token(ibextext);
                                  }
 	YY_BREAK
 case 39:
