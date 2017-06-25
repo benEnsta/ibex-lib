@@ -87,6 +87,12 @@ public:
 	CPPUNIT_TEST(is_subset06);
 	CPPUNIT_TEST(is_subset07);
 
+	CPPUNIT_TEST(is_relative_interior01);
+	CPPUNIT_TEST(is_relative_interior02);
+	CPPUNIT_TEST(is_relative_interior03);
+	CPPUNIT_TEST(is_relative_interior04);
+	CPPUNIT_TEST(is_relative_interior05);
+
 	CPPUNIT_TEST(extr_diam_index01);
 	CPPUNIT_TEST(extr_diam_index02);
 	CPPUNIT_TEST(extr_diam_index03);
@@ -157,6 +163,8 @@ public:
 	CPPUNIT_TEST(diff34);
 	CPPUNIT_TEST(diff35);
 	CPPUNIT_TEST(diff36);
+	CPPUNIT_TEST(diff37);
+	CPPUNIT_TEST(diff38);
 
 	CPPUNIT_TEST(issue228);
 
@@ -257,6 +265,12 @@ public:
 	void is_subset05();
 	void is_subset06();
 	void is_subset07();
+
+	void is_relative_interior01();
+	void is_relative_interior02();
+	void is_relative_interior03();
+	void is_relative_interior04();
+	void is_relative_interior05();
 
 	// test:
 	//    extr_diam_index() const
@@ -387,6 +401,10 @@ public:
 	void diff35();
 	// [-2,2]x[-2,2]x[-2,2] \ [2,4]x[-1,1]x[-1,1]
 	void diff36();
+	// [-2,2]x[-2,2] \ [-2,2]x[1,1]
+	void diff37();
+	// [-2,2]x[1,1] \ [0,2]x[-2,2]
+	void diff38();
 
 	void issue228();
 
@@ -395,7 +413,7 @@ public:
 	void random02();
 
 private:
-	bool test_diff(int n, double x[][2], double y[][2], int m, double z[][2], bool debug=false);
+	bool test_diff(int n, double x[][2], double y[][2], int m, double z[][2], bool compactness=true, bool debug=false);
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestIntervalVector);

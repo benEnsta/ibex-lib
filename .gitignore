@@ -25,6 +25,9 @@
 .settings
 .project
 
+# python generated files
+*.pyc
+
 # waf generated stuff
 .waf*
 .lock-waf*
@@ -45,3 +48,8 @@ newdoc/_build
 build/
 wip/
 demo/
+# files in examples
+**/examples/*
+!**/examples/*cpp
+!**/examples/makefile
+
