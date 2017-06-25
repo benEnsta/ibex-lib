@@ -39,7 +39,8 @@ deploy:
   description: 'Custom ibex version for pyIbex and Robotics'
   provider: GitHub
   auth_token:
-    secure: kfuelei+usQrQv/IZnoepVAx6SU1E8BKoR6rXwXM3grYnvzBQM2P9xMKQ+Nc+BYr
+    secure: Bu9kqyFD6errPkHu23iueJXI5x7JZ/8ZHVwoYNB1ZijEQ7KOySfC/sJ0fKBDgFOA
+    
   artifact: ibex-lib,ibex-lib-zip
   draft: true
   prerelease: false
