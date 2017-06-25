@@ -1,8 +1,47 @@
-# Create cxscconf.h file (will be created in the build directory
+
+FILE(READ ${CMAKE_SOURCE_DIR}/plugins/interval_lib_filib/wrapper.cpp IBEX_INTERVAL_LIB_WRAPPER_CPP)
+FILE(READ ${CMAKE_SOURCE_DIR}/plugins/interval_lib_filib/wrapper.h IBEX_INTERVAL_LIB_WRAPPER_H)
+set(IBEX_INTERVAL_LIB_INCLUDES "#include \"interval/interval.hpp\"")
+set(IBEX_INTERVAL_LIB_EXTRA_DEFINES "
+/* simplify instantiation */
+#define FI_BASE double
+#define FI_ROUNDING filib::native_switched
+#define FI_MODE filib::i_mode_extended_flag
+/** \\brief IBEX_NAN: <double> representation of NaN */
+#define IBEX_NAN filib::primitive::compose(0,0x7FF,1 << 19,0)
+")
+set( IBEX_INTERVAL_LIB_NEG_INFINITY  "filib::primitive::compose(1,0x7FF,0,0)" )
+set( IBEX_INTERVAL_LIB_POS_INFINITY  "filib::primitive::compose(0,0x7FF,0,0)" )
+set( IBEX_INTERVAL_LIB_ITV_EXTRA  "typedef filib::interval<FI_BASE,FI_ROUNDING,FI_MODE> FI_INTERVAL;" )
+set( IBEX_INTERVAL_LIB_ITV_WRAP  "Interval(const FI_INTERVAL& x);" )
+set( IBEX_INTERVAL_LIB_ITV_ASSIGN  "Interval& operator=(const FI_INTERVAL& x);" )
+set( IBEX_INTERVAL_LIB_ITV_DEF  "FI_INTERVAL itv;" )
+set( IBEX_INTERVAL_LIB_DISTANCE  "x1.itv.dist(x2.itv);" )
+set(INTERVAL_LIB "FILIB")
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Interval.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.h
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Interval.cpp.in
+  ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.cpp
+)
+
+
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/ibex_Setting.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
 )
+
+# add generated files to SRCS and HEADERS
+set(HEADERS ${HEADERS}
+      ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.h
+      ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
+)
+set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.cpp)
+
 
 set( DIR_LIST
 	arithmetic
@@ -28,6 +67,8 @@ endif(WIN32)
 
 # include all .cpp and .h
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/arithmetic)
+
 
 foreach( dir ${DIR_LIST})
 	message(STATUS ${dir})
@@ -38,7 +79,7 @@ foreach( dir ${DIR_LIST})
 	set(SRCS ${SRCS} ${dir_src})
 	set(HEADERS ${HEADERS} ${dir_headers} ${dir_headers_})
 endforeach(dir)
-set(HEADERS ${HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h)
+
 
 set(dir ${CMAKE_CURRENT_SOURCE_DIR}/parser)
 if(GENERATE_PARSER_FILES)

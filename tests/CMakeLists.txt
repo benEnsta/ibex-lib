@@ -21,6 +21,12 @@ file(GLOB Test_SRC
     "*.h"
     "*.cpp"
 )
+include(CheckIncludeFiles)
+CHECK_INCLUDE_FILES("fmemopen.h" HAVE_FMEMOPEN)
+if(HAVE_FMEMOPEN)
+  add_definitions(-DHAVE_FMEMOPEN)
+endif(HAVE_FMEMOPEN)
+
 if( NOT WITH_CLP)
 	list(REMOVE_ITEM Test_SRC ${CMAKE_CURRENT_SOURCE_DIR}/TestCtcPolytopHull.cpp)
 	list(REMOVE_ITEM Test_SRC ${CMAKE_CURRENT_SOURCE_DIR}/TestFritzJohn.cpp)
