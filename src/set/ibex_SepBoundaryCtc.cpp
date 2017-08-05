@@ -65,7 +65,12 @@ void SepBoundaryCtc::separate(IntervalVector& x_in, IntervalVector& x_out) {
 			}
 			else if (res==NO) {
 				x_in |= rest[i]; break;
+			} else {
+				x_in |=rest[i];
+				x_out |= rest[i];
+				break;
 			}
+
 			candidate_pt = rest[i].random();
 		}
 	}
