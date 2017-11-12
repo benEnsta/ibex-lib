@@ -36,7 +36,7 @@ void SepBoundaryCtc::separate(IntervalVector& x_in, IntervalVector& x_out) {
 	x_in = box; x_out = box;
 
 	IntervalVector* rest;
-	int n=box0.diff(box,rest); // calculate the set difference
+	int n=box0.diff(box,rest, false); // calculate the set difference
 
 	BoolInterval res;
 
