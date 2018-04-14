@@ -17,7 +17,6 @@
 #include "ibex_Array.h"
 #include "ibex_SymbolMap.h"
 #include "ibex_ExprSubNodes.h"
-#include "ibex_Fnc.h"
 
 #include <stdexcept>
 #include <stdarg.h>
@@ -34,7 +33,6 @@ class InHC4Revise;
 
 /**
  * \ingroup function
- *
  * \brief Symbolic function (x->f(x) where f(x) is the DAG of an arithmetical expression).
  *
  * Every expression in ibex (like x^2+y^2) is considered as a function,
@@ -56,7 +54,7 @@ class InHC4Revise;
  *
  *
  */
-class Function : public Fnc {
+class Function {
 
 public:
 
@@ -565,6 +563,17 @@ public:
 	int nb_arg() const;
 
 	/**
+	 * \brief Return the total number of variables (n).
+	 */
+	int nb_var() const;
+
+	/**
+	 * \brief Return the number of components of f (m).
+	 *
+	 */
+	int image_dim() const;
+
+	/**
 	 * \brief Return true if the ith variable is used in the function.
 	 *
 	 * \warning The function is seen as a function from R^n to R^m. So, the
@@ -649,23 +658,21 @@ public:
 	/**
 	 * \brief Calculate f(box) using interval arithmetic.
 	 *
-	 * \pre f must be real-valued.
+	 * \pre f must be real-valued
 	 */
-	virtual Interval eval(const IntervalVector& box) const;
+	Interval eval(const IntervalVector& box) const;
 
 	/**
 	 * \brief Calculate f(box) using interval arithmetic.
-	 *
-	 * \pre f must be vector-valued.
 	 */
-	virtual IntervalVector eval_vector(const IntervalVector& box) const;
+	IntervalVector eval_vector(const IntervalVector& box) const;
 
 	/**
 	 * \brief Calculate f(x) using interval arithmetic.
 	 *
-	 * \pre f must be matrix-valued.
+	 * \pre f must be matrix-valued
 	 */
-	virtual IntervalMatrix eval_matrix(const IntervalVector& x) const;
+	IntervalMatrix eval_matrix(const IntervalVector& x) const;
 
 	/**
 	 * \brief Calculate f(box) using interval arithmetic.
@@ -694,7 +701,7 @@ public:
 	 *
 	 * \pre f must be real-valued
 	 */
-	virtual void gradient(const IntervalVector& x, IntervalVector& g) const;
+	void gradient(const IntervalVector& x, IntervalVector& g) const;
 
 	/**
 	 * \brief Calculate the gradient of f.
@@ -709,35 +716,63 @@ public:
 	 * \param J - where the Jacobian matrix has to be stored (output parameter).
 	 *
 	 */
-	virtual void jacobian(const IntervalVector& x, IntervalMatrix& J) const;
+	void jacobian(const IntervalVector& x, IntervalMatrix& J) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Jacobian matrix of f
+	 * \pre f must be vector-valued
 	 */
 	IntervalMatrix jacobian(const IntervalVector& x) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Jacobian matrix of a restriction of f
+	 *
+	 * The function is restricted to some variables, the other (parameters)
+	 * being considered as constants.
+	 *
+	 * \param J_var   - Jacobian w.r.t variables
+	 * \param J_param - Jacobian w.r.t. parameters
 	 */
 	void jacobian(const IntervalVector& full_box, IntervalMatrix& J_var, IntervalMatrix& J_param, const VarSet& set) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Hansen matrix of f.
+	 *
+	 * The expansion point is the center of x.
 	 */
 	void hansen_matrix(const IntervalVector& x, IntervalMatrix& h) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Hansen matrix of f for a given (set of) expansion point x0.
+	 *
+	 * \note If the expansion point x0 is set to x, the Hansen matrix is equal to the Jacobian
+	 *       matrix (but computation is much slower).
 	 */
 	void hansen_matrix(const IntervalVector& x, const IntervalVector& x0, IntervalMatrix& h) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Hansen matrix of a restriction of f
+	 *
+	 * The function is restricted to some variables, the other (parameters)
+	 * being considered as constants.
+	 *
+	 * \param H_var   - Hansen matrix w.r.t. variables (parameters are interval constants)
+	 * \param J_param - Jacobian w.r.t. parameters (variables are interavl constants).
+	 *                  Note: no more "Hansen scheme" here.
 	 */
 	void hansen_matrix(const IntervalVector& full_box, IntervalMatrix& H_var, IntervalMatrix& J_param, const VarSet& set) const;
 
 	/**
-	 *\see #ibex::Fnc
+	 * \brief Calculate the Hansen matrix of a restriction of f with a given (set of) expansion point x0.
+	 *
+	 * The function f(x,p) is restricted to the n variables x, the others m variables p are parameters
+	 * (considered as constants).
+	 *
+	 * \param full_box - The (n+m)-dimensional box [x]x[p]
+	 * \param x0       - The n-dimensional expansion point x0 (usually inside [x])
+	 * \param H_var    - The n-columned Hansen matrix w.r.t. x (all the p are interval constants)
+	 * \param J_param  - The m-columned Jacobian w.r.t. p (all the x are interval constants).
+	 *                   Note: no more "Hansen scheme" here.
 	 */
 	void hansen_matrix(const IntervalVector& full_box, const IntervalVector& x0, IntervalMatrix& H_var, IntervalMatrix& J_param, const VarSet& set) const;
 
@@ -871,6 +906,10 @@ private:
 	 * not considered as part of the definition of the function.
 	 */
 	void decorate(const Array<const ExprSymbol>& x, const ExprNode& y);
+
+	int _nb_var;
+
+	int _image_dim;
 
 	Array<const ExprSymbol> symbs;              // to retrieve symbol (node)s by appearing order.
 	std::vector<bool> is_used;                  // tells whether the i^th component is used.
@@ -1055,6 +1094,14 @@ inline void Function::print_expr(std::ostream& os) const {
 	os << expr();
 }
 
+inline int Function::nb_var() const {
+	return _nb_var;
+}
+
+inline int Function::image_dim() const {
+	return _image_dim;
+}
+
 inline void Function::gradient(const IntervalVector& x, IntervalVector& g) const {
 	assert(g.size()==nb_var());
 	assert(x.size()==nb_var());
@@ -1074,27 +1121,17 @@ inline void Function::jacobian(const IntervalVector& x, IntervalMatrix& J) const
 }
 
 inline IntervalMatrix Function::jacobian(const IntervalVector& x) const {
-	return Fnc::jacobian(x);
+	IntervalMatrix J(image_dim(),x.size());
+	jacobian(x,J);
+	return J;
 }
 
-inline void Function::jacobian(const IntervalVector& full_box, IntervalMatrix& J_var, IntervalMatrix& J_param, const VarSet& set) const {
-	Fnc::jacobian(full_box,J_var,J_param,set);
+inline void Function::hansen_matrix(const IntervalVector& box, IntervalMatrix& H) const {
+	hansen_matrix(box, box.mid(), H);
 }
 
-inline void Function::hansen_matrix(const IntervalVector& x, IntervalMatrix& h) const {
-	Fnc::hansen_matrix(x,h);
-}
-
-inline void Function::hansen_matrix(const IntervalVector& x, const IntervalVector& x0, IntervalMatrix& h) const {
-	Fnc::hansen_matrix(x,x0,h);
-}
-
-inline void Function::hansen_matrix(const IntervalVector& full_box, IntervalMatrix& H_var, IntervalMatrix& J_param, const VarSet& set) const {
-	Fnc::hansen_matrix(full_box,H_var,J_param,set);
-}
-
-inline void Function::hansen_matrix(const IntervalVector& full_box, const IntervalVector& x0, IntervalMatrix& H_var, IntervalMatrix& J_param, const VarSet& set) const {
-	Fnc::hansen_matrix(full_box,x0,H_var,J_param,set);
+inline void Function::hansen_matrix(const IntervalVector& box, IntervalMatrix& H_var, IntervalMatrix& J_param, const VarSet& set) const {
+	hansen_matrix(box, set.var_box(box).mid(), H_var, J_param, set);
 }
 
 inline Eval& Function::basic_evaluator() const {

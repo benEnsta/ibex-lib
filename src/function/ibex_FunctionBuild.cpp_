@@ -516,8 +516,7 @@ void Function::init(const Array<const ExprSymbol>& x, const ExprNode& y, const c
 	FindInputsUsed fsu(x, y, symbol_index, is_used);
 
 	(int&) _nb_var = is_used.size();
-
-	_image_dim = y.dim;
+	(int&) _image_dim = y.dim.size();
 
 	nodes.init(&x,y,true);
 
