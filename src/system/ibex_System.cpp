@@ -2,10 +2,10 @@
 //                                  I B E X                                   
 // File        : ibex_System.cpp
 // Author      : Gilles Chabert
-// Copyright   : Ecole des Mines de Nantes (France)
+// Copyright   : IMT Atlantique (France)
 // License     : See the LICENSE file
 // Created     : Jun 12, 2012
-// Last Update : Jun 12, 2012
+// Last Update : Nov 22, 2017
 //============================================================================
 
 #include "ibex_System.h"
@@ -14,7 +14,20 @@
 #include "ibex_ExprCopy.h"
 #include "ibex_SystemCopy.cpp_"
 #include "ibex_SystemMerge.cpp_"
+
 #include <stdio.h>
+
+#ifndef _WIN32 // MinGW does not support mutex
+#include <mutex>
+namespace {
+std::mutex mtx;
+}
+#define LOCK mtx.lock()
+#define UNLOCK mtx.unlock()
+#else
+#define LOCK
+#define UNLOCK
+#endif
 
 extern int ibexparse();
 extern void ibexparse_string(const char* syntax);
@@ -26,23 +39,25 @@ using namespace std;
 
 namespace ibex {
 
+
 namespace parser {
 extern System* system;
 extern bool choco_start;
 }
 
-System::System() : nb_var(0), nb_ctr(0), box(1) /* tmp */ {
+System::System() : nb_var(0), nb_ctr(0), ops(NULL), box(1) /* tmp */ {
 
 }
 
-System::System(const char* filename) : nb_var(0), nb_ctr(0), box(1) /* tmp */ {
+System::System(const char* filename) : nb_var(0), nb_ctr(0), ops(NULL), box(1) /* tmp */ {
 	FILE *fd;
 	if ((fd = fopen(filename, "r")) == NULL) throw UnknownFileException(filename);
 	load(fd);
 }
 
 System::System(int n, const char* syntax) : nb_var(n), /* NOT TMP (required by parser) */
-		                                    nb_ctr(0), box(1) /* tmp */ {
+		                                    nb_ctr(0), ops(NULL), box(1) /* tmp */ {
+	LOCK;
 	try {
 		parser::choco_start=true;
 		parser::system=this;
@@ -50,11 +65,13 @@ System::System(int n, const char* syntax) : nb_var(n), /* NOT TMP (required by p
 		parser::system=NULL;
 	} catch(SyntaxError& e) {
 		parser::system=NULL;
+		UNLOCK;
 		throw e;
 	}
+	UNLOCK;
 }
 
-System::System(const System& sys, copy_mode mode) : nb_var(0), nb_ctr(0), func(0), box(1) {
+System::System(const System& sys, copy_mode mode) : nb_var(0), nb_ctr(0), func(0), ops(NULL), box(1) {
 
 	switch(mode) {
 	case COPY :      init(SystemCopy(sys,COPY)); break;
@@ -64,7 +81,7 @@ System::System(const System& sys, copy_mode mode) : nb_var(0), nb_ctr(0), func(0
 
 }
 
-System::System(const System& sys1, const System& sys2) : nb_var(0), nb_ctr(0), func(0), box(1) {
+System::System(const System& sys1, const System& sys2) : nb_var(0), nb_ctr(0), func(0), ops(NULL), box(1) {
 	init(SystemMerge(sys1,sys2));
 }
 
@@ -83,6 +100,10 @@ std::ostream& operator<<(std::ostream& os, const System& sys) {
 	}
 	os << endl;
 
+	os << "box: " << endl << "  ";
+	os << sys.box << endl;
+
+
 	os << "goal: " << endl;
 	if (sys.goal!=NULL)
 	    os << "  " << sys.goal->expr() << endl;
@@ -97,6 +118,9 @@ std::ostream& operator<<(std::ostream& os, const System& sys) {
 }
 
 void System::load(FILE* fd) {
+
+	LOCK;
+
 	ibexin = fd;
 
 	try {
@@ -109,10 +133,13 @@ void System::load(FILE* fd) {
 		parser::system=NULL;
 		fclose(fd);
 		ibexrestart(ibexin);
+		UNLOCK;
 		throw e;
 	}
 
 	fclose(fd);
+
+	UNLOCK;
 }
 
 System::~System() {
@@ -129,6 +156,8 @@ System::~System() {
 		// has never been created
 		for (int i=0; i<args.size(); i++) delete &args[i];
 	}
+
+	if (ops) delete[] ops;
 }
 
 } // end namespace ibex

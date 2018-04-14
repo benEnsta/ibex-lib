@@ -15,7 +15,7 @@
 
 #include "ibex_Newton.h"
 #include "ibex_Linear.h"
-#include "ibex_LinearSolver.h"
+#include "ibex_LPSolver.h"
 #include "ibex_CtcFwdBwd.h"
 
 #include <iomanip>
@@ -111,7 +111,7 @@ IntervalVector find_solution(Function& f, IntervalVector& facet, const VarSet& v
 					s.push(_pair.first);
 					s.push(_pair.second);
 //				} else {
-//					s.push(_pair#include "ibex_LinearSolver.h".second);
+//					s.push(_pair#include "ibex_LPSolver.h".second);
 //					s.push(_pair.first);
 //				}
 			}
@@ -150,7 +150,7 @@ bool is_homeomorph_half_ball(const IntervalVector& ginf, const IntervalMatrix& D
 	Matrix Jsup=Dg.ub();
 	Vector Jsup_pinf= Jsup * pinf;
 
-	LinearSolver linsolve(p, k);
+	LPSolver linsolve(p, k);
 
 	Interval opt(0.0); // store the optimum (unused)
 
@@ -160,24 +160,26 @@ bool is_homeomorph_half_ball(const IntervalVector& ginf, const IntervalMatrix& D
 
 	while (!over) {
 
-		linsolve.initBoundVar(param_box);
+		linsolve.set_bounds(param_box);
 
 		for (int i=0; i<k; i++) {
 			if (b[i])
 				//cout << "  add constraint: " << Jinf.row(i) << "*u>=" << (Jinf_pinf[i]-ginf[i].lb()) << endl;
-				linsolve.addConstraint(Jinf.row(i),GEQ,Jinf_pinf[i]-ginf[i].lb());
+				linsolve.add_constraint(Jinf.row(i),GEQ,Jinf_pinf[i]-ginf[i].lb());
 			else
 				//cout << "  add constraint: " << Jsup.row(i) << "*u<=" << (Jsup_pinf[i]-ginf[i].ub()) << endl;
-				linsolve.addConstraint(Jsup.row(i),LEQ,Jsup_pinf[i]-ginf[i].ub());
+				linsolve.add_constraint(Jsup.row(i),LEQ,Jsup_pinf[i]-ginf[i].ub());
 		}
 
+		linsolve.set_obj_var(0,1);
+		
 		// note : "-1" just to have a strict minorant of the objective
-		LinearSolver::Status_Sol stat = linsolve.run_simplex(param_box, LinearSolver::MINIMIZE, 0, opt,param_box[0].lb()-1);
+		LPSolver::Status_Sol stat = linsolve.solve(); //run_simplex(LPSolver::MINIMIZE, 0, opt,param_box[0].lb()-1);
 		//cout << "  status=" << stat << endl;
 
-		linsolve.cleanConst();
+		linsolve.clean_ctrs();
 
-		if (stat != LinearSolver::OPTIMAL) {
+		if (stat != LPSolver::OPTIMAL) {
 			result=false;
 			break;
 		}

@@ -41,7 +41,7 @@ void TestGradient::add01() {
 
 void TestGradient::add02() {
 	Variable x,y;
-	Function f(x,y,ExprVector::new_(sqr(x)-y,x*y,false));
+	Function f(x,y,ExprVector::new_col(sqr(x)-y,x*y));
 
 	IntervalVector box(2);
 	box[0]=Interval(1,2);
@@ -115,13 +115,13 @@ void TestGradient::mulVM02() {
 	Variable x;
 	Array<const ExprNode> _row1(x,ExprConstant::new_scalar(1));
 	Array<const ExprNode> _row2(ExprConstant::new_scalar(0),x);
-	const ExprVector& row1=ExprVector::new_(_row1,true);
-	const ExprVector& row2=ExprVector::new_(_row2,true);
+	const ExprVector& row1=ExprVector::new_row(_row1);
+	const ExprVector& row2=ExprVector::new_row(_row2);
 	Array<const ExprNode> _M(row1,row2);
-	const ExprVector& M=ExprVector::new_(_M,false);
+	const ExprVector& M=ExprVector::new_col(_M);
 
 	Array<const ExprNode> _v(x,-x);
-	const ExprVector& v=ExprVector::new_(_v,true);
+	const ExprVector& v=ExprVector::new_row(_v);
 
 	Function f(x,v*M);
 	IntervalVector box(1,Interval(3.0));
@@ -585,6 +585,83 @@ void TestGradient::hansen01() {
 	CPPUNIT_ASSERT(almost_eq(H[27][27],Interval(1,1),error));
 	CPPUNIT_ASSERT(almost_eq(H[28][28],Interval(1,1),error));
 	CPPUNIT_ASSERT(almost_eq(H[29][29],Interval(1,1),error));
+
+}
+
+void TestGradient::jacobian_components01() {
+	const ExprSymbol& x = ExprSymbol::new_("x");
+	const ExprSymbol& y = ExprSymbol::new_("y");
+	const ExprSymbol& z = ExprSymbol::new_("z");
+	const ExprNode& e1=x*y;
+	const ExprNode& e2=y*z;
+	const ExprNode& e3=e1*e2;
+
+	Function f(x,y,z,Return(e3+x,e3+y,e3+z));
+
+	double vx=1.0;
+	double vy=2.0;
+	double vz=3.0;
+	IntervalVector box(3);
+	box[0]=vx;
+	box[1]=vy;
+	box[2]=vz;
+
+	BitSet components=BitSet::empty(3);
+	components.add(0);
+	components.add(2);
+
+	IntervalMatrix res=f.jacobian(box,components);
+
+	CPPUNIT_ASSERT(res.nb_rows()==2);
+	CPPUNIT_ASSERT(res[0][0]==vy*vy*vz+1);
+	CPPUNIT_ASSERT(res[0][1]==2*vx*vy*vz);
+	CPPUNIT_ASSERT(res[0][2]==vx*vy*vy);
+	CPPUNIT_ASSERT(res[1][0]==vy*vy*vz);
+	CPPUNIT_ASSERT(res[1][1]==2*vx*vy*vz);
+	CPPUNIT_ASSERT(res[1][2]==vx*vy*vy+1);
+}
+
+void TestGradient::jacobian_components02() {
+	const ExprSymbol& x = ExprSymbol::new_("x",Dim::col_vec(3));
+	const ExprSymbol& y = ExprSymbol::new_("y",Dim::col_vec(3));
+	const ExprSymbol& z = ExprSymbol::new_("z",Dim::col_vec(3));
+	Function f(x,y,z,Return(x+y,x+z,y+z));
+	double vx=1.0;
+	double vy=2.0;
+	double vz=3.0;
+	IntervalVector box(9);
+	for (int i=0; i<9; i++) box[i]=Interval(i,i);
+
+	BitSet components=BitSet::empty(3);
+	components.add(0);
+	components.add(2);
+	components.add(4);
+	components.add(6);
+	components.add(8);
+
+	IntervalMatrix res=f.jacobian(box,components);
+
+	CPPUNIT_ASSERT(res.nb_rows()==5);
+
+	for (int i=0; i<9; i++) {
+		CPPUNIT_ASSERT(res[0][i]==(i==0 || i==3));
+	}
+
+	for (int i=0; i<9; i++) {
+		CPPUNIT_ASSERT(res[1][i]==(i==2 || i==5));
+	}
+
+	for (int i=0; i<9; i++) {
+		CPPUNIT_ASSERT(res[2][i]==(i==1 || i==7));
+	}
+
+	for (int i=0; i<9; i++) {
+		CPPUNIT_ASSERT(res[3][i]==(i==3 || i==6));
+	}
+
+	for (int i=0; i<9; i++) {
+		CPPUNIT_ASSERT(res[4][i]==(i==5 || i==8));
+	}
 
 }
 

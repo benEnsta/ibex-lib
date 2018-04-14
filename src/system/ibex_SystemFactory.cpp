@@ -28,6 +28,10 @@ void SystemFactory::add_var(const ExprSymbol& v) {
 	add_var(v,IntervalVector(v.dim.size()));
 }
 
+void SystemFactory::add_var(const ExprSymbol& v, const Interval& init_box) {
+	add_var(v,IntervalVector(v.dim.size(),init_box));
+}
+
 void SystemFactory::add_var(const ExprSymbol& v,  const IntervalVector& init_box ) {
 	assert(v.dim.size()==init_box.size());
 	if (goal || !ctrs.empty()) ibex_error("cannot add a variable to a system after a constraint (or the goal function)");
@@ -61,8 +65,12 @@ void SystemFactory::add_var(const Array<const ExprSymbol>& a, const IntervalVect
 void SystemFactory::add_var(const Array<const ExprSymbol>& a, const Array<const IntervalVector>& init_boxes) {
 	if (goal || !ctrs.empty()) ibex_error("cannot add a variable to a system after a constraint (or the goal function)");
 
-	for (int i=0; i<a.size(); i++)
-		add_var(a[i],init_boxes[i]);
+	for (int i=0; i<a.size(); i++) {
+		tmp_args.push_back(&a[i]);
+		nb_arg++;
+		nb_var+= a[i].dim.size();
+		tmp_bound.push_back(init_boxes[i]);
+	}
 }
 */
 
@@ -71,7 +79,7 @@ void SystemFactory::init_arg_bound() {
 
 	bound_init.resize(nb_var);
 	int i=0;
-	for (typename std::vector<IntervalVector>::const_iterator it=tmp_bound.begin(); it!=tmp_bound.end(); it++) {
+	for (std::vector<IntervalVector>::const_iterator it=tmp_bound.begin(); it!=tmp_bound.end(); it++) {
 		bound_init.put(i,*it);
 		i+=(*it).size();
 	}
@@ -132,11 +140,12 @@ void System::init_f_from_ctrs() {
 		total_output_size += ctrs[j].f.image_dim();
 
 	Array<const ExprNode> image(total_output_size);
+	if (total_output_size>0) ops = new CmpOp[total_output_size];
 	int i=0;
 
 	// concatenate all the components of all the constraints function
 	for (int j=0; j<ctrs.size(); j++) {
-		Function& fj=ctrs[j].f;
+		const Function& fj=ctrs[j].f;
 
 		/*========= 1st variant ===============
 		 * will have the disadvantage that the DAG structure
@@ -167,17 +176,22 @@ void System::init_f_from_ctrs() {
 		const Dim& fjd=fj.expr().dim;
 		switch (fjd.type()) {
 		case Dim::SCALAR :
+			ops[i]=ctrs[j].op;
 			image.set_ref(i++,e);
 			break;
 		case Dim::ROW_VECTOR:
 		case Dim::COL_VECTOR:
-			for (int k=0; k<fjd.vec_size(); k++)
+			for (int k=0; k<fjd.vec_size(); k++) {
+				ops[i]=ctrs[j].op;
 				image.set_ref(i++,e[k]);
+			}
 			break;
 		case Dim::MATRIX:
 			for (int k=0; k<fjd.nb_rows(); k++)
-				for (int l=0; l<fjd.nb_cols(); l++)
+				for (int l=0; l<fjd.nb_cols(); l++) {
+					ops[i]=ctrs[j].op;
 					image.set_ref(i++,e[k][l]);
+				}
 			break;
 		default:
 			assert(false);
@@ -188,13 +202,11 @@ void System::init_f_from_ctrs() {
 	}
 	assert(i==total_output_size);
 
-	// TODO: we should probably homgenize; in the case of a scalar function
-	// a 1-sized vector should be created.
-	f.init(args, total_output_size>1? ExprVector::new_(image,false) : image[0]);
+	f_ctrs.init(args, total_output_size>1? ExprVector::new_col(image) : image[0]);
 }
 
 
-System::System(const SystemFactory& fac) : nb_var(0), nb_ctr(0), box(1) {
+System::System(const SystemFactory& fac) : nb_var(0), nb_ctr(0), ops(NULL), box(1) {
 	init(fac);
 }
 

@@ -24,7 +24,7 @@ double default_gauss_seidel_ratio=1e-04;
 
 namespace {
 //
-//inline bool newton_step(const Function& f, IntervalVector& box,
+//inline bool newton_step(const Fnc& f, IntervalVector& box,
 //		IntervalVector& mid, IntervalVector& Fmid, IntervalMatrix& J) {
 //
 //	f.hansen_matrix(box,J);
@@ -34,20 +34,20 @@ namespace {
 //
 }
 
-bool newton(const Function& f, const VarSet* vars, IntervalVector& full_box, double prec, double ratio_gauss_seidel) {
+bool newton(const Fnc& f, const VarSet* vars, IntervalVector& full_box, double prec, double ratio_gauss_seidel) {
 	int n=vars? vars->nb_var : f.nb_var();
 	int m=f.image_dim();
 	assert(full_box.size()==f.nb_var());
 
 	IntervalMatrix J(m, n);
 
-//	IntervalVector* p=NULL;      // Parameter box
-//	IntervalVector* midp=NULL;   // Parameter box midpoint
+	IntervalVector* p=NULL;      // Parameter box
+	IntervalVector* midp=NULL;   // Parameter box midpoint
 	IntervalMatrix* Jp=NULL;     // Jacobian % parameters
-//
+
 	if (vars) {
-//		p=new IntervalVector(vars->param_box(full_box));
-//		midp=new IntervalVector(p->mid());
+		p=new IntervalVector(vars->param_box(full_box));
+		midp=new IntervalVector(p->mid());
 		Jp=new IntervalMatrix(n,vars->nb_param);
 	}
 
@@ -87,9 +87,9 @@ bool newton(const Function& f, const VarSet* vars, IntervalVector& full_box, dou
 
 		// Use the jacobian % parameters to calculate
 		// a mean-value form for Fmid
-//		if (vars) {
-//			Fmid &= f.eval_vector(vars->full_box(mid,*midp))+(*Jp)*(*p-*midp);
-//		}
+		if (vars) {
+			Fmid &= f.eval_vector(vars->full_box(mid,*midp))+(*Jp)*(*p-*midp);
+		}
 
 		y = mid-box;
 		if (y==y1) break;
@@ -131,8 +131,8 @@ bool newton(const Function& f, const VarSet* vars, IntervalVector& full_box, dou
 	while (gain >= prec);
 
 	if (vars) {
-//		delete p;
-//		delete midp;
+		delete p;
+		delete midp;
 		delete Jp;
 		delete &box;
 		delete &full_mid;
@@ -141,15 +141,15 @@ bool newton(const Function& f, const VarSet* vars, IntervalVector& full_box, dou
 	return reducted;
 }
 
-bool newton(const Function& f, IntervalVector& box, double prec, double ratio_gauss_seidel) {
+bool newton(const Fnc& f, IntervalVector& box, double prec, double ratio_gauss_seidel) {
 	return newton(f,NULL,box,prec,ratio_gauss_seidel);
 }
 
-bool newton(const Function& f, const VarSet& vars, IntervalVector& full_box, double prec, double ratio_gauss_seidel) {
+bool newton(const Fnc& f, const VarSet& vars, IntervalVector& full_box, double prec, double ratio_gauss_seidel) {
 	return newton(f,&vars,full_box,prec,ratio_gauss_seidel);
 }
 
-bool inflating_newton(const Function& f, const VarSet* vars, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
+bool inflating_newton(const Fnc& f, const VarSet* vars, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
 	int n=vars ? vars->nb_var : f.nb_var();
 	assert(f.image_dim()==n);
 	assert(full_box.size()==f.nb_var());
@@ -167,13 +167,17 @@ bool inflating_newton(const Function& f, const VarSet* vars, const IntervalVecto
 	IntervalVector Fmid(n);      // Evaluation of f at the midpoint
 	IntervalMatrix J(n, n);	     // Hansen matrix of f % variables
 
-//	IntervalVector* p=NULL;      // Parameter box
-//	IntervalVector* midp=NULL;   // Parameter box midpoint
+	// Following variables are introduced just to use a
+	// centered-form on parameters when evaluating Fmid
+	IntervalVector* p=NULL;      // Parameter box
+	IntervalVector* midp=NULL;   // Parameter box midpoint
+	// -------------------------------------------------
+
 	IntervalMatrix* Jp=NULL;     // Jacobian % parameters
 //
 	if (vars) {
-//		p=new IntervalVector(vars->param_box(full_box));
-//		midp=new IntervalVector(p->mid());
+		p=new IntervalVector(vars->param_box(full_box));
+		midp=new IntervalVector(p->mid());
 		Jp=new IntervalMatrix(n,vars->nb_param);
 	}
 
@@ -216,9 +220,9 @@ bool inflating_newton(const Function& f, const VarSet* vars, const IntervalVecto
 
 		// Use the jacobian % parameters to calculate
 		// a mean-value form for Fmid
-//		if (vars) {
-//			Fmid &= f.eval_vector(vars->full_box(mid,*midp))+(*Jp)*(*p-*midp);
-//		}
+		if (vars) {
+			Fmid &= f.eval_vector(vars->full_box(mid,*midp))+(*Jp)*(*p-*midp);
+		}
 
 		y = mid-box;
 		//if (y==y1) break; <--- allowed in Newton inflation
@@ -296,8 +300,8 @@ bool inflating_newton(const Function& f, const VarSet* vars, const IntervalVecto
 	}
 
 	if (vars) {
-//		delete p;
-//		delete midp;
+		delete p;
+		delete midp;
 		delete Jp;
 		delete &full_mid;
 	}
@@ -310,21 +314,21 @@ bool inflating_newton(const Function& f, const VarSet* vars, const IntervalVecto
 }
 
 
-bool inflating_newton(const Function& f, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
+bool inflating_newton(const Fnc& f, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
 	return inflating_newton(f,NULL,full_box,box_existence,box_unicity,k_max,mu_max,delta,chi);
 }
 
-bool inflating_newton(const Function& f, const VarSet& vars, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
+bool inflating_newton(const Fnc& f, const VarSet& vars, const IntervalVector& full_box, IntervalVector& box_existence, IntervalVector& box_unicity, int k_max, double mu_max, double delta, double chi) {
 	return inflating_newton(f,&vars,full_box,box_existence,box_unicity,k_max,mu_max,delta,chi);
 }
 
-VarSet get_newton_vars(const Function& f, const Vector& pt, const BitSet& forced_params) {
+VarSet get_newton_vars(const Fnc& f, const Vector& pt, const VarSet& forced_params) {
 	int n=f.nb_var();
 	int m=f.image_dim();
 
-	if (forced_params.size()==n-m)
+	if (forced_params.nb_param==n-m)
 		// no need to find parameters: they are given
-		return VarSet(n,forced_params,false);
+		return VarSet(forced_params);
 
 	Matrix A=f.jacobian(pt).mid();
 	Matrix LU(m,n);
@@ -335,7 +339,7 @@ VarSet get_newton_vars(const Function& f, const Vector& pt, const BitSet& forced
 	// the "forced" parameters, we fill their respective
 	// column with zeros
 	for (int i=0; i<n; i++) {
-		if (forced_params[i]) {
+		if (!forced_params.is_var[i]) {
 			A.set_col(i,Vector::zeros(m));
 		}
 	}
@@ -358,7 +362,7 @@ VarSet get_newton_vars(const Function& f, const Vector& pt, const BitSet& forced
 	}
 
 	for (int j=0; j<n; j++) {
-		assert(!(forced_params[j] && _vars[j]));
+		assert(!(!forced_params.is_var[j] && _vars[j]));
 	}
 
 	delete [] pr;

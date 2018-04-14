@@ -4,11 +4,10 @@
 import os, sys
 from distutils.version import LooseVersion
 from waflib import Scripting, Logs, Options, Utils
-from waflib.Build import BuildContext
 import ibexutils
 
 # The following variable is used to build ibex.pc and by "waf dist"
-VERSION="2.3.0"
+VERSION="2.6.0"
 # The following variable is used only by "waf dist"
 APPNAME='ibex-lib'
 
@@ -29,7 +28,7 @@ def options (opt):
 	waflib.Tools.compiler_cxx.cxx_compiler["win32"].remove ("msvc")
 
 	opt.load ("compiler_cxx compiler_c javaw")
-	opt.load ("waf_benchmarks")
+	opt.load ("waf_benchmarks", tooldir='.')
 
 	opt.add_option ("--enable-shared", action="store_true", dest="ENABLE_SHARED",
 			help = "build ibex as a shared library")
@@ -63,6 +62,8 @@ def options (opt):
 	opt.add_option ("--interval-lib", action="store", dest="INTERVAL_LIB",
 									choices = list_of_interval_lib_plugin,
 									default = default_interval_lib, help = help_string)
+
+	ibexutils.lp_lib_options (opt)
 
 	# recurse on plugins directory
 	opt.recurse("plugins")
@@ -106,14 +107,19 @@ def configure (conf):
 	# Optimised compilation flags
 	if conf.options.DEBUG:
 		Logs.info("Enabling debug mode")
-		flags = "-O0 -g -pg -Wall -Wno-unknown-pragmas -Wno-unused-variable"
+		flags = "-std=c++11 -O0 -g -pg -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-function"
 		flags += " -fmessage-length=0"
 		conf.define ("DEBUG", 1)
+		conf.env.DEBUG = True
 	else:
-		flags = "-O3"
+		flags = "-std=c++11 -O3"
 		conf.define ("NDEBUG", 1)
+		conf.env.DEBUG = False
 	for f in flags.split():
 		conf.check_cxx(cxxflags=f, use="IBEX", mandatory=False, uselib_store="IBEX")
+	
+	# To fix Windows compilation problem (strdup with std=c++11, see issue #287)
+	conf.check_cxx(cxxflags = "-U__STRICT_ANSI__", uselib_store="IBEX")
 
 	# Build as shared lib is asked
 	conf.start_msg ("Ibex will be built as a")
@@ -166,13 +172,21 @@ def configure (conf):
 	# Add info on the interval library used to the settings
 	conf.setting_define("INTERVAL_LIB", conf.env["INTERVAL_LIB"])
 
+	# Configure LP library
+	conf.lp_lib ()
+
 	# recurse
 	Logs.pprint ("BLUE", "Configuration of the plugins")
+	conf.options.WITH_SOLVER = True
+	Logs.pprint  ("YELLOW", "Note: IbexSolve automatically installed.")
 	conf.recurse ("plugins")
 	Logs.pprint ("BLUE", "Configuration of the src directory")
 	conf.recurse ("src")
 	Logs.pprint ("BLUE", "Configuration of the tests")
 	conf.recurse ("tests")
+
+	Logs.pprint ("BLUE", "Load benchmarks module")
+	conf.load ("waf_benchmarks")
 
 	# If we used a 3rd party library, add the install path (for *.pc file)
 	if conf.env.INSTALL_3RD: # It may not be necessary but it costs nothing
@@ -234,12 +248,12 @@ def build (bld):
 
 	if bld.env.INSTALL_3RD:
 		incnode = bld.bldnode.find_node("3rd").find_node("include")
-		incfiles = incnode.ant_glob ("**")
+		incfiles = incnode.ant_glob ("**", quiet=True)
 		bld.install_files (bld.env.INCDIR_3RD, incfiles, cwd = incnode,
 			relative_trick = True)
 
 		libnode = bld.bldnode.find_node("3rd").find_node("lib")
-		libfiles = libnode.ant_glob ("**")
+		libfiles = libnode.ant_glob ("**", quiet=True)
 		bld.install_files (bld.env.LIBDIR_3RD, libfiles, cwd = libnode,
 			relative_trick = True)
 
@@ -250,6 +264,7 @@ def dist (ctx):
 	files_patterns = "wscript benchs/** src/** examples/** waf"
 	files_patterns += " COPYING.LESSER LICENSE ibexutils.py"
 	files_patterns += " plugins/wscript plugins/interval_lib_gaol/"
+	files_patterns += " plugins/lp_lib_none/"
 	ctx.files = ctx.path.ant_glob(files_patterns)
 
 ######################
@@ -270,25 +285,16 @@ def utest (tst):
 	Logs.free_logger (tst.logger)
 	tst.logger = None
 
-class UTestContext (BuildContext):
-	cmd = "utest"
-	fun = "utest"
-
 ######################
 ##### benchmarks #####
 ######################
 def benchmarks (bch):
 	'''run the benchmarks'''
-	logfile = os.path.join (bch.bldnode.abspath(), "benchmarks_config.log")
-	bch.logger = Logs.make_logger (logfile, "benchmarks_config")
 
+	# Make sure all 'build' targets are up-to-date before doing benchmarks
+	bch.add_build_targets()
+
+	# load benchmarks tools
 	bch.load ("waf_benchmarks")
 
 	bch.recurse ("benchmarks plugins", mandatory = False)
-
-	Logs.free_logger (bch.logger)
-	bch.logger = None
-
-class BenchmarksContext (BuildContext):
-	cmd = "benchmarks"
-	fun = "benchmarks"

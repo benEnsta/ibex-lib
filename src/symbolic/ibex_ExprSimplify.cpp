@@ -1,9 +1,11 @@
-/*
- * ibex_ExprSimplify.cpp
- *
- *  Created on: May 19, 2016
- *      Author: gilles
- */
+//============================================================================
+//                                  I B E X
+// File        : ibex_ExprSimplify.cpp
+// Author      : Gilles Chabert
+// Copyright   : IMT Atlantique (France)
+// License     : See the LICENSE file
+// Created     : May 19, 2016
+//============================================================================
 
 #include "ibex_ExprSimplify.h"
 #include "ibex_Expr.h"
@@ -171,7 +173,7 @@ void ExprSimplify::visit(const ExprVector& e) {
 				all_same &= (res.back()==&e.arg(i));
 			}
 			c+=n;
-			assert(i<e.nb_args);
+			assert(((int) i)<e.nb_args);
 			i++;
 		}
 	} else {
@@ -189,7 +191,7 @@ void ExprSimplify::visit(const ExprVector& e) {
 				all_same &= (res.back()==&e.arg(i));
 			}
 			r+=n;
-			assert(i<e.nb_args);
+			assert(((int) i)<e.nb_args);
 			i++;
 		}
 	}
@@ -201,10 +203,10 @@ void ExprSimplify::visit(const ExprVector& e) {
 		for (i=0; i<res.size(); i++)
 			arg_cst.set_ref(i, to_cst(*res[i]));
 		insert(e, ExprConstant::new_(Domain(arg_cst, e.row_vector())));
-	} else if (res.size()==e.nb_args && all_same)
+	} else if (((int) res.size())==e.nb_args && all_same)
 		insert(e, e);
 	else
-		insert(e, ExprVector::new_(res,e.row_vector()));
+		insert(e, ExprVector::new_(res,e.orient));
 }
 
 void ExprSimplify::visit(const ExprIndex& e) {

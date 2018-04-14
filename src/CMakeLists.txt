@@ -17,7 +17,7 @@ set( IBEX_INTERVAL_LIB_ITV_WRAP  "Interval(const FI_INTERVAL& x);" )
 set( IBEX_INTERVAL_LIB_ITV_ASSIGN  "Interval& operator=(const FI_INTERVAL& x);" )
 set( IBEX_INTERVAL_LIB_ITV_DEF  "FI_INTERVAL itv;" )
 set( IBEX_INTERVAL_LIB_DISTANCE  "x1.itv.dist(x2.itv);" )
-set(INTERVAL_LIB "FILIB")
+set( INTERVAL_LIB "FILIB")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/arithmetic/ibex_Interval.h.in
@@ -28,7 +28,22 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.cpp
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/numeric/ibex_LPSolver.cpp.in
+  ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.cpp
+)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/numeric/ibex_LPSolver.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.h
+)
+
+configure_file(
+  ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.cpp_
+  ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPWrapper.cpp_
+
+)
+# FILE(READ ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.h IBEX_INTERVAL_LIB_WRAPPER_H)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/ibex_Setting.h.in
@@ -37,10 +52,12 @@ configure_file(
 
 # add generated files to SRCS and HEADERS
 set(HEADERS ${HEADERS}
-      ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.h
-      ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
+    ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.h
+    ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.h
+    ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
 )
 set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.cpp)
+set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.cpp)
 
 
 set( DIR_LIST
@@ -68,6 +85,7 @@ endif(WIN32)
 # include all .cpp and .h
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/arithmetic)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/numeric)
 
 
 foreach( dir ${DIR_LIST})

@@ -25,6 +25,10 @@ void ibex_error(const char* message) {
 }
 
 void ibex_warning(const char* message) {
+	cerr << "\033[33mwarning: " << message << "\033[0m" << endl;
+}
+
+void ibex_warning(const std::string& message) {
 	cerr << "warning: " << message << endl;
 }
 
