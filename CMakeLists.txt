@@ -8,7 +8,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 	#SET(CMAKE_BUILD_TYPE "MINSIZEREL")
 ENDIF()
 
-set(PACKAGE_VERSION "2.4.2")
+set(PACKAGE_VERSION "2.6.5")
 
 # option declaration
 option(BUILD_TESTS "Build tests" ON)

@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD_SRC_PARSER_HPP_INCLUDED
-# define YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD_SRC_PARSER_HPP_INCLUDED
+#ifndef YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD2_SRC_PARSER_HPP_INCLUDED
+# define YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD2_SRC_PARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -56,51 +56,53 @@ extern int ibexdebug;
     TK_STRING = 266,
     TK_INTEGER = 267,
     TK_FLOAT = 268,
-    TK_INFINITY = 269,
-    TK_BOOL = 270,
-    TK_PARAM = 271,
-    TK_CONST = 272,
-    TK_VARS = 273,
-    TK_FUNCTION = 274,
-    TK_MIN = 275,
-    TK_MAX = 276,
-    TK_INF = 277,
-    TK_MID = 278,
-    TK_SUP = 279,
-    TK_SIGN = 280,
-    TK_ABS = 281,
-    TK_SQRT = 282,
-    TK_EXPO = 283,
-    TK_LOG = 284,
-    TK_COS = 285,
-    TK_SIN = 286,
-    TK_TAN = 287,
-    TK_ACOS = 288,
-    TK_ASIN = 289,
-    TK_ATAN = 290,
-    TK_ATAN2 = 291,
-    TK_COSH = 292,
-    TK_SINH = 293,
-    TK_TANH = 294,
-    TK_ACOSH = 295,
-    TK_ASINH = 296,
-    TK_ATANH = 297,
-    TK_LEQ = 298,
-    TK_GEQ = 299,
-    TK_EQU = 300,
-    TK_ASSIGN = 301,
-    TK_CHI = 302,
-    TK_BEGIN = 303,
-    TK_END = 304,
-    TK_FOR = 305,
-    TK_FROM = 306,
-    TK_TO = 307,
-    TK_RETURN = 308,
-    TK_CTRS = 309,
-    TK_MINIMIZE = 310,
-    TK_IN = 311,
-    TK_UNION = 312,
-    TK_INTERSEC = 313
+    TK_PI = 269,
+    TK_INFINITY = 270,
+    TK_BOOL = 271,
+    TK_PARAM = 272,
+    TK_CONST = 273,
+    TK_VARS = 274,
+    TK_FUNCTION = 275,
+    TK_DIFF = 276,
+    TK_MIN = 277,
+    TK_MAX = 278,
+    TK_INF = 279,
+    TK_MID = 280,
+    TK_SUP = 281,
+    TK_SIGN = 282,
+    TK_ABS = 283,
+    TK_SQRT = 284,
+    TK_EXPO = 285,
+    TK_LOG = 286,
+    TK_COS = 287,
+    TK_SIN = 288,
+    TK_TAN = 289,
+    TK_ACOS = 290,
+    TK_ASIN = 291,
+    TK_ATAN = 292,
+    TK_ATAN2 = 293,
+    TK_COSH = 294,
+    TK_SINH = 295,
+    TK_TANH = 296,
+    TK_ACOSH = 297,
+    TK_ASINH = 298,
+    TK_ATANH = 299,
+    TK_LEQ = 300,
+    TK_GEQ = 301,
+    TK_EQU = 302,
+    TK_ASSIGN = 303,
+    TK_CHI = 304,
+    TK_BEGIN = 305,
+    TK_END = 306,
+    TK_FOR = 307,
+    TK_FROM = 308,
+    TK_TO = 309,
+    TK_RETURN = 310,
+    TK_CTRS = 311,
+    TK_MINIMIZE = 312,
+    TK_IN = 313,
+    TK_UNION = 314,
+    TK_INTERSEC = 315
   };
 #endif
 
@@ -109,6 +111,7 @@ extern int ibexdebug;
 
 union YYSTYPE
 {
+#line 16 "/home/biop/Downloads/ibex-lib/src/parser/parser.yc" /* yacc.c:1909  */
 
   char*     str;
   int       itg;
@@ -125,6 +128,7 @@ union YYSTYPE
   std::vector<const ibex::parser::P_ExprNode*>* expressions;
 
 
+#line 132 "/home/biop/Downloads/ibex-lib/build2/src/parser.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -137,4 +141,4 @@ extern YYSTYPE ibexlval;
 
 int ibexparse (void);
 
-#endif /* !YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD_SRC_PARSER_HPP_INCLUDED  */
+#endif /* !YY_IBEX_HOME_BIOP_DOWNLOADS_IBEX_LIB_BUILD2_SRC_PARSER_HPP_INCLUDED  */
