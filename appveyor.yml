@@ -20,7 +20,7 @@ build_script:
   - cd c:\projects\ibex-lib
   - mkdir build
   - cd build
-  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF ../
+  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON ../
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
@@ -40,7 +40,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: Bu9kqyFD6errPkHu23iueJXI5x7JZ/8ZHVwoYNB1ZijEQ7KOySfC/sJ0fKBDgFOA
-    
+
   artifact: ibex-lib,ibex-lib-zip
   draft: true
   prerelease: false
