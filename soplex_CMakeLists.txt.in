@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 2.8)
+
+set(SRC_LIST
+  changesoplex.cpp clufactor.cpp didxset.cpp
+  dsvector.cpp dvector.cpp dvector_exact.cpp enter.cpp
+  idxset.cpp leave.cpp lpcolset.cpp lprowset.cpp
+  lprow.cpp mpqreal.cpp mpsinput.cpp nameset.cpp
+  slufactor.cpp soplex.cpp
+  spxbasis.cpp spxbounds.cpp spxboundflippingrt.cpp spxchangebasis.cpp
+  spxequilisc.cpp spxdantzigpr.cpp spxdefaultrt.cpp
+  spxdefines.cpp spxdesc.cpp spxdevexpr.cpp
+  spxfastrt.cpp spxfileio.cpp spxgeometsc.cpp spxgithash.cpp
+  spxharrisrt.cpp spxhybridpr.cpp spxid.cpp spxio.cpp
+  spxlp.cpp spxlpfread.cpp spxmainsm.cpp spxmpsread.cpp
+  spxmpswrite.cpp spxlpfwrite.cpp
+  spxout.cpp spxparmultpr.cpp spxquality.cpp
+  spxscaler.cpp spxshift.cpp spxsolver.cpp spxsolve.cpp
+  spxstarter.cpp spxsteeppr.cpp spxsumst.cpp spxvecs.cpp
+  spxvectorst.cpp spxweightpr.cpp spxweightst.cpp spxwritestate.cpp
+  ssvector.cpp svector.cpp svset.cpp timer.cpp
+  tracemethod.cpp unitvector.cpp updatevector.cpp
+  vector.cpp vector_exact.cpp
+  gzstream.cpp
+)
+
+foreach (src ${SRC_LIST})
+  set(SRCS ${SRCS} src/${src})
+endforeach(src ${SRC_LIST})
+
+include_directories(src)
+
+add_library(soplex ${SRCS})
+
+add_executable(soplexmain src/soplexmain.cpp)
+target_link_libraries(soplexmain soplex)
+
+add_executable(simpleexample src/simpleexample.cpp)
+target_link_libraries(simpleexample soplex)

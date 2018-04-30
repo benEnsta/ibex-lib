@@ -37,12 +37,17 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/numeric/ibex_LPSolver.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.h
 )
-
-configure_file(
-  ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.cpp_
-  ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPWrapper.cpp_
-
-)
+if (WITH_SOPLEX)
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/plugins/lp_lib_soplex/ibex_LPWrapper.cpp_
+    ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPWrapper.cpp_
+  )
+else(WITH_SOLEX)
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.cpp_
+    ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPWrapper.cpp_
+  )
+endif(WITH_SOPLEX)
 # FILE(READ ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.h IBEX_INTERVAL_LIB_WRAPPER_H)
 
 configure_file(

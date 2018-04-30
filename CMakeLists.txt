@@ -14,16 +14,43 @@ set(PACKAGE_VERSION "2.6.5")
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLE "Build example" ON)
 option(WITH_FILIB ON)
-option(WITH_CLP OFF)
+option(WITH_SOPLEX OFF)
+# option(WITH_SOPLEX OFF)
 option(GENERATE_PARSER_FILES OFF)
 option(BUILD_SHARED OFF)
 
+
 set(_IBEX_WITH_FILIB_ "1")
-if(WITH_CLP)
-	set(_IBEX_WITH_CLP_ "1")
-else(WITH_CLP)
+if(WITH_SOPLEX)
+	set(_IBEX_WITH_SOPLEX_ "1")
+	execute_process(
+		COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/plugins/lp_lib_soplex/3rd/soplex-1.7.1.tar -C ${CMAKE_CURRENT_BINARY_DIR}
+		#WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rd
+	)
+	# endif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soplex_CMakeLists.txt.in
+			${CMAKE_CURRENT_BINARY_DIR}/soplex-1.7.1/CMakeLists.txt COPYONLY
+	)
+	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/soplex-1.7.1)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/soplex-1.7.1/src)
+	set(IBEX_LP_LIB_EXTRA_ATTRIBUTES  "soplex::SoPlex *mysoplex;")
+	set(IBEX_LP_LIB_INCLUDES
+"""
+#ifdef DEBUG
+	#undef DEBUG
+	#ifndef DEBUGGING
+			#define DEBUGGING
+	#endif
+	#include \"soplex.h\"
+	#define DEBUG
+#else
+	#include \"soplex.h\"
+#endif
+"""
+)
+else(WITH_SOPLEX)
 	set(_IBEX_WITH_NOLP_ "1")
-endif(WITH_CLP)
+endif(WITH_SOPLEX)
 # set(_IBEX_WITH_CXSC_ "1")
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-fPIC SUPPORT_FPIC)
@@ -97,6 +124,8 @@ endif("${isSystemDir}" STREQUAL "-1")
 	add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/filibsrc)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/filibsrc)
 # endif(WITH_FILIB)
+
+
 
 add_subdirectory(src)
 
