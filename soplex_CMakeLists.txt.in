@@ -31,8 +31,8 @@ include_directories(src)
 
 add_library(soplex ${SRCS})
 
-add_executable(soplexmain src/soplexmain.cpp)
-target_link_libraries(soplexmain soplex)
+# add_executable(soplexmain src/soplexmain.cpp)
+# target_link_libraries(soplexmain soplex)
 
 add_executable(simpleexample src/simpleexample.cpp)
 target_link_libraries(simpleexample soplex)
