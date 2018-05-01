@@ -9,6 +9,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 set(PACKAGE_VERSION "2.6.5")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/)
 
 # option declaration
 option(BUILD_TESTS "Build tests" ON)
@@ -134,6 +135,7 @@ add_subdirectory(src)
 
 if (BUILD_TESTS)
 	ENABLE_TESTING()
+	find_package(cppunit REQUIRED)
 	include( CTest )
 	INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/src/include)
 	MESSAGE(STATUS ${CTEST_ENVIRONMENT})

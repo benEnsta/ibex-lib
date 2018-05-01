@@ -12,11 +12,13 @@ environment:
   matrix:
     - CMAKE_PLATFORM: "Visual Studio 14 2015"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
+      CPPUNIT_VERSION: 'cppunit:x86-windows'
     - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
+      CPPUNIT_VERSION: 'cppunit:x64-windows'
 
 build_script:
-  - vcpkg install cppunit
+  - vcpkg install "%CPPUNIT_VERSION%"
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
