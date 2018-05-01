@@ -60,7 +60,7 @@ list(REMOVE_ITEM Test_SRC ${CMAKE_CURRENT_SOURCE_DIR}/nonreg.cpp)
 #  set(LIBS ${LIBS} ${CPPUNIT_LIBRARIES})
 #endif(CPPUNIT_FOUND)
 
-set(LIBS ${LIBS} cppunit)
+# set(LIBS ${LIBS} cppunit)
 # add_definitions(-DSRCDIR_TESTS="\".\"")
 file(COPY quimper DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ../benchs DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
