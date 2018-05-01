@@ -17,13 +17,17 @@ environment:
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
       CPPUNIT_VERSION: 'cppunit:x64-windows'
 
+cache: c:\tools\vcpkg\installed\
+
 build_script:
   - vcpkg install "%CPPUNIT_VERSION%"
+  - cd c:\tools\vcpkg
+  - vcpkg integrate install
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
   - cd build
-  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON ../
+  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON  -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake ../
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
