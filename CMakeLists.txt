@@ -27,6 +27,9 @@ if(WITH_SOPLEX)
 		COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/plugins/lp_lib_soplex/3rd/soplex-1.7.1.tar -C ${CMAKE_CURRENT_BINARY_DIR}
 		#WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rd
 	)
+	execute_process(
+		COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR} patch -p0 -i ${CMAKE_CURRENT_SOURCE_DIR}/plugins/lp_lib_soplex/3rd/soplex-1.7.1.all.all.patch
+	)
 	# endif(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/3rd/filibsrc)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soplex_CMakeLists.txt.in
 			${CMAKE_CURRENT_BINARY_DIR}/soplex-1.7.1/CMakeLists.txt COPYONLY
