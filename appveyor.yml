@@ -16,6 +16,7 @@ environment:
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
 
 build_script:
+  - vcpkg install cppunit
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
