@@ -45,9 +45,10 @@ doc/_build
 *~
 
 #build dir
-build/
+build*/
 wip/
 demo/
+newdoc/
 # files in examples
 **/examples/*
 !**/examples/*cpp

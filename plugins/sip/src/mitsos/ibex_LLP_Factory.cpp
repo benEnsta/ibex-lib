@@ -20,7 +20,7 @@ LLP_Factory::LLP_Factory(const MitsosSIP& sip, int c, const Vector& xopt) : new_
 	varcopy(sip.params,new_vars_y);
 
 	for (int I=0; I<sip.n_arg; I++) {
-		x_domain.set_ref(I,*new Domain(sip.vars[I]->dim));
+		x_domain.set_ref(I,*new Domain(sip.vars[I].dim));
 	}
 
 	load(x_domain,xopt);
@@ -75,7 +75,7 @@ LLP_Factory::LLP_Factory(const MitsosSIP& sip, int c, const Vector& xopt) : new_
 
 	// TODO: not the cleanest way!!
 	for (int j=0; j<sip.p; j++) {
-		if (sip.sys.ctrs[c].f.used(sip.varset.param(j))) {
+		if (sip.sys.ctrs[c].f.used_vars[sip.varset.param(j)]) {
 			param_LLP_var.add(j);
 		}
 	}

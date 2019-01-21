@@ -2,12 +2,11 @@
 //                                  I B E X                                   
 // File        : ibex_ExprCopy.h
 // Author      : Gilles Chabert
-// Copyright   : Ecole des Mines de Nantes (France)
+// Copyright   : IMT Atlantique (France)
 // License     : See the LICENSE file
 // Created     : Jun 19, 2012
-// Last Update : May 20, 2016
+// Last Update : Apr 25, 2018
 //============================================================================
-
 
 #ifndef __IBEX_EXPR_COPY_H__
 #define __IBEX_EXPR_COPY_H__
@@ -56,20 +55,22 @@ public:
 	 *
 	 * Symbols in \a old_x are matched to symbols in \a new_x with respect to their order.
 	 *
-	 * \param fold_cst - if true, all constant subexpressions are "folded" into a single node.
+	 * \param shared - if true, the node map structure is maintained through all calls to "copy" (this
+	 *                 allows to benefit from the DAG structure of several expressions copied in turn).
+	 *                 The resulting expressions are therefore not independent in this case.
 	 *
 	 * \pre The size of \a new_x must be greater or equal to the size of \a old_x. It is not
 	 *      required to be the same size to allow the use of extra variables (that do not occur in the expression).
 	 *      This is used, e.g., in ibex_Optimizer to transform a function x->g(x) into (x,y)->g(x).
 	 */
-	const ExprNode& copy(const Array<const ExprSymbol>& old_x, const Array<const ExprNode>& new_x, const ExprNode& y);
+	const ExprNode& copy(const Array<const ExprSymbol>& old_x, const Array<const ExprNode>& new_x, const ExprNode& y, bool shared=false);
 
 	/*
 	 * \brief Duplicate an expression (with new symbols).
 	 *
-	 * \see copy(const Array<const ExprSymbol>& old_x, const Array<const ExprNode>& new_x, const ExprNode& y, bool fold_cst=false).
+	 * \see copy(const Array<const ExprSymbol>& old_x, const Array<const ExprNode>& new_x, const ExprNode& y, bool shared=false).
 	 */
-	const ExprNode& copy(const Array<const ExprSymbol>& old_x, const Array<const ExprSymbol>& new_x, const ExprNode& y);
+	const ExprNode& copy(const Array<const ExprSymbol>& old_x, const Array<const ExprSymbol>& new_x, const ExprNode& y, bool shared=false);
 
 protected:
 	void visit(const ExprNode& e);
@@ -79,6 +80,7 @@ protected:
 	void visit(const ExprVector& e);
 	void visit(const ExprApply& e);
 	void visit(const ExprChi& e);
+	void visit(const ExprGenericBinaryOp& e);
 	void visit(const ExprAdd& e);
 	void visit(const ExprMul& e);
 	void visit(const ExprSub& e);
@@ -86,6 +88,7 @@ protected:
 	void visit(const ExprMax& e);
 	void visit(const ExprMin& e);
 	void visit(const ExprAtan2& e);
+	void visit(const ExprGenericUnaryOp& e);
 	void visit(const ExprMinus& e);
 	void visit(const ExprTrans& e);
 	void visit(const ExprSign& e);
@@ -116,8 +119,8 @@ protected:
  	 	 	 	 	 	 	 inline implementation
   ============================================================================*/
 
-inline const ExprNode& ExprCopy::copy(const Array<const ExprSymbol>& old_x, const Array<const ExprSymbol>& new_x, const ExprNode& y) {
-	return this->copy(old_x, (const Array<const ExprNode>&) new_x, y);
+inline const ExprNode& ExprCopy::copy(const Array<const ExprSymbol>& old_x, const Array<const ExprSymbol>& new_x, const ExprNode& y, bool shared) {
+	return this->copy(old_x, (const Array<const ExprNode>&) new_x, y, shared);
 }
 
 

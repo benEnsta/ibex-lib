@@ -52,8 +52,8 @@ public:
 	/** Add a function. */
 	void add_func(const char* id, Function* f);
 
-	/** Add a local variable in a function. */
-	void add_func_tmp_symbol(const char* tmp_symbol, const P_ExprNode* expr);
+	/** Add a local variable in a function/constraint declaration. */
+	void add_expr_tmp_symbol(const char* tmp_symbol, const P_ExprNode* expr);
 
 	/** Add a variable symbol (domain is (-oo,oo)x...). */
 	void add_var(const char* id, const Dim* dim);
@@ -63,6 +63,8 @@ public:
 
 	/** Add an (uninitialized) iterator. */
 	void add_iterator(const char* id);
+
+	//void add_operator(const char* id);
 
 	/*------------- get data associated to symbols in the current scope -----------*/
 
@@ -75,8 +77,8 @@ public:
 	/* Return the function */
 	Function& get_func(const char* id);
 
-	/* Return the expression bound to a tmp symbol in a function */
-	const P_ExprNode& get_func_tmp_expr(const char* id) const;
+	/* Return the expression bound to a tmp symbol */
+	const P_ExprNode& get_expr_tmp_expr(const char* id) const;
 
 	/* Return the symbol attached to a string */
 	std::pair<const ExprSymbol*,const Domain*> get_var(const char* id) const;
@@ -100,9 +102,16 @@ public:
 	void set_iter_value(const char* id, int value);
 
 	/*---------------------------------------------------------------------*/
-	/* return the token associated to a symbol (used by lexer)
-	 * either TK_SYMBOL, TK_CONSTANT, TK_TMP_SYMBOL, TK_FUNC_RETURN or TK_FUNC. */
+	/* Return the token associated to a symbol (used by lexer)
+	 * either:
+	 *    TK_ENTITY:           symbol of a variable (from the "variables" block)
+	 *    TK_CONSTANT:         symbol of a constant (from the "constants" block)
+	 *    TK_FUNC_SYMBOL:      name of a function declared in minibex.
+	 *    TK_EXPR_TMP_SYMBOL:  left-hand symbol in an expression assignment like expr=f(x)
+	 *    TK_ITERATOR:         name of an iterator in a "for" constraint loop
+	 */
 	int token(const char* id) const;
+	/*---------------------------------------------------------------------*/
 
 	/* Return if id is the symbol of a constant */
 	bool is_cst_symbol(const char* id) const;
@@ -119,7 +128,7 @@ private:
 	class S_Entity;
 	class S_Cst;
 	class S_Func;
-	class S_FuncTmp;
+	class S_ExprTmp;
 	class S_Iterator;
 
 	/** All the variables (in declaration order).*/

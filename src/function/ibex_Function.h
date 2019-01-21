@@ -570,32 +570,6 @@ public:
 	int nb_arg() const;
 
 	/**
-	 * \brief Return true if the ith variable is used in the function.
-	 *
-	 * \warning The function is seen as a function from R^n to R^m. So, the
-	 * ith variable is <b>not</b> the ith symbol.
-	 *
-	 */
-	bool used(int i) const;
-
-	/**
-	 * \brief Return the number of used variables.
-	 */
-	int nb_used_vars() const;
-
-	/**
-	 * \brief Return the ith used variable.
-	 *
-	 * \pre 0<=i<nb_used_vars().
-	 */
-	int used_var(int i) const;
-
-	/**
-	 * \brief Return a pointer to the array of used variables.
-	 */
-	const int* used_vars() const;
-
-	/**
 	 * \brief Return the current number of nodes in the DAG.
 	 */
 	int nb_nodes() const;
@@ -839,10 +813,18 @@ public:
 	 */
 	InHC4Revise& inhc4revise() const;
 
+	/**
+	 * \brief True if all the arguments are scalar
+	 *
+	 * Useful for various code optimization.
+	 */
+	bool all_args_scalar() const;
+
 	// ============================================================================
 
-
-	CompiledFunction cf; // "public" just for debug
+	// ***internal***
+	// "public" just for debug
+	CompiledFunction cf;
 
 	/**
 	 * \brief Name of the function.
@@ -851,22 +833,26 @@ public:
 	 */
 	const char* name;
 
+	/**
+	 * \brief Variables used by this function
+	 *
+	 * \warning The function is seen as a function from R^n to R^m. So, the
+	 * ith variable is <b>not</b> the ith symbol.
+	 */
+	const std::vector<int> used_vars;
+
+	/**
+	 * \brief Syntactical tree of the function
+	 */
 	ExprSubNodes nodes;
+
+protected:
+	friend std::ostream& operator<<(std::ostream& os, const Function& f);
 
 	/**
 	 * \brief Initialize _nb_used_vars and _used_var
 	 */
 	void generate_used_vars() const;
-
-	/**
-	 * \brief True if all the arguments are scalar
-	 *
-	 * Useful for various code optimization.
-	 */
-	bool all_args_scalar() const;
-
-protected:
-	friend std::ostream& operator<<(std::ostream& os, const Function& f);
 
 	/**
 	 * \brief Generate f[0], f[1], etc. (all stored in "comp")
@@ -927,12 +913,6 @@ private:
 	// TODO: actually never used if f is vector/matrix valued
 	Gradient *_grad;
 	InHC4Revise *_inhc4revise;
-
-	// number of used vars (value "-1" means "not yet generated")
-	mutable int _nb_used_vars;
-
-	// only generated if required
-	mutable int* _used_var;
 };
 
 } // end namespace
@@ -963,10 +943,6 @@ inline Function& Function::operator[](int i) const {
 
 inline int Function::nb_arg() const {
 	return symbs.size();
-}
-
-inline bool Function::used(int i) const {
-	return is_used[i];
 }
 
 inline const Array<const ExprSymbol>& Function::args() const {
@@ -1163,20 +1139,6 @@ inline HC4Revise& Function::hc4revise() const {
 
 inline InHC4Revise& Function::inhc4revise() const {
 	return *_inhc4revise;
-}
-
-inline int Function::nb_used_vars() const {
-	if (_nb_used_vars==-1) generate_used_vars();
-	return _nb_used_vars;
-}
-
-inline int Function::used_var(int i) const {
-	if (_nb_used_vars==-1) generate_used_vars();
-	return _used_var[i];
-}
-
-inline const int* Function::used_vars() const {
-	return _used_var;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Function& f) {

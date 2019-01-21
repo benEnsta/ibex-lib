@@ -1,4 +1,4 @@
-/* =========é===================================================================
+/* ============================================================================
  * I B E X - Functions
  * ============================================================================
  * Copyright   : Ecole des Mines de Nantes (FRANCE)
@@ -22,8 +22,6 @@ using namespace std;
 namespace ibex {
 
 Function::~Function() {
-	if (_used_var!=NULL)
-		delete[] _used_var;
 
 	if (comp!=NULL) {
 		/* warning... if there is only one constraint

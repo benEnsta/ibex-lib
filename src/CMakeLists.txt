@@ -39,6 +39,17 @@ configure_file(
 )
 
 configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/symbolic/ibex_ExprOperators.cpp.in
+  ${CMAKE_CURRENT_BINARY_DIR}/symbolic/ibex_ExprOperators.cpp
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/symbolic/ibex_ExprOperators.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/symbolic/ibex_ExprOperators.h
+)
+
+
+configure_file(
   ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.cpp_
   ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPWrapper.cpp_
 
@@ -54,10 +65,13 @@ configure_file(
 set(HEADERS ${HEADERS}
     ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.h
     ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.h
+    ${CMAKE_CURRENT_BINARY_DIR}/symbolic/ibex_ExprOperators.h
     ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
 )
 set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/arithmetic/ibex_Interval.cpp)
 set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/numeric/ibex_LPSolver.cpp)
+set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/symbolic/ibex_ExprOperators.cpp)
+
 
 
 set( DIR_LIST
@@ -86,7 +100,8 @@ endif(WIN32)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/arithmetic)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/numeric)
-
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/symbolic)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../plugins/solver/src)
 
 foreach( dir ${DIR_LIST})
 	message(STATUS ${dir})

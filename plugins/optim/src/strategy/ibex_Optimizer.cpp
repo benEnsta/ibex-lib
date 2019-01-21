@@ -11,8 +11,7 @@
 #include "ibex_Timer.h"
 #include "ibex_Function.h"
 #include "ibex_NoBisectableVariableException.h"
-#include "ibex_Backtrackable.h"
-#include "ibex_OptimData.h"
+#include "ibex_BxpOptimData.h"
 
 #include <float.h>
 #include <stdlib.h>
@@ -71,10 +70,11 @@ double Optimizer::compute_ymax() {
 	return ymax;
 }
 
-bool Optimizer::update_loup(const IntervalVector& box) {
+bool Optimizer::update_loup(const IntervalVector& box, BoxProperties& prop) {
 
 	try {
-		pair<IntervalVector,double> p=loup_finder.find(box,loup_point,loup);
+
+		pair<IntervalVector,double> p=loup_finder.find(box,loup_point,loup,prop);
 		loup_point = p.first;
 		loup = p.second;
 
@@ -189,14 +189,23 @@ void Optimizer::contract_and_bound(Cell& c, const IntervalVector& init_box) {
 	if (y.is_empty()) {
 		c.box.set_empty();
 		return;
+	} else {
+		c.prop.update(BoxEvent(c.box,BoxEvent::CONTRACT,BitSet::singleton(n+1,goal_var)));
 	}
 
 	/*================ contract x with f(x)=y and g(x)<=0 ================*/
 	//cout << " [contract]  x before=" << c.box << endl;
 	//cout << " [contract]  y before=" << y << endl;
 
-	ctc.contract(c.box);
+	ContractContext context(c.prop);
+	if (c.bisected_var!=-1) {
+		context.impact.clear();
+		context.impact.add(c.bisected_var);
+		context.impact.add(goal_var);
+	}
 
+	ctc.contract(c.box, context);
+	//cout << c.prop << endl;
 	if (c.box.is_empty()) return;
 
 	//cout << " [contract]  x after=" << c.box << endl;
@@ -208,16 +217,15 @@ void Optimizer::contract_and_bound(Cell& c, const IntervalVector& init_box) {
 	IntervalVector tmp_box(n);
 	read_ext_box(c.box,tmp_box);
 
-//	entailed = &c.get<EntailedCtr>();
-//	if (!update_entailed_ctr(tmp_box)) {
-//		c.box.set_empty();
-	//		return;
-//	}
+	c.prop.update(BoxEvent(c.box,BoxEvent::CHANGE));
 
-	bool loup_ch=update_loup(tmp_box);
+	bool loup_ch=update_loup(tmp_box, c.prop);
 
 	// update of the upper bound of y in case of a new loup found
-	if (loup_ch) y &= Interval(NEG_INFINITY,compute_ymax());
+	if (loup_ch) {
+		y &= Interval(NEG_INFINITY,compute_ymax());
+		c.prop.update(BoxEvent(c.box,BoxEvent::CONTRACT,BitSet::singleton(n+1,goal_var)));
+	}
 
 	//TODO: should we propagate constraints again?
 
@@ -269,19 +277,21 @@ Optimizer::Status Optimizer::optimize(const IntervalVector& init_box, double obj
 
 	Cell* root=new Cell(IntervalVector(n+1));
 
-	write_ext_box(init_box,root->box);
+	write_ext_box(init_box, root->box);
 
 	// add data required by the bisector
-	bsc.add_backtrackable(*root);
+	bsc.add_property(init_box, root->prop);
+
+	// add data required by the contractor
+	ctc.add_property(init_box, root->prop);
 
 	// add data required by the buffer
-	buffer.add_backtrackable(*root);
+	buffer.add_property(init_box, root->prop);
 
-	// add data required by optimizer + KKT contractor
-//	root->add<EntailedCtr>();
-//	//root->add<Multipliers>();
-//	entailed=&root->get<EntailedCtr>();
-//	entailed->init_root(user_sys,sys);
+	// add data required by the loup finder
+	loup_finder.add_property(init_box, root->prop);
+
+	//cout << "**** Properties ****\n" << root->prop << endl;
 
 	loup_changed=false;
 	initial_loup=obj_init_bound;

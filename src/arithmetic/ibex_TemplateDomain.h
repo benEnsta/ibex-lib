@@ -14,6 +14,7 @@
 #define __IBEX_TEMPLATE_DOMAIN_H__
 
 #include "ibex_Dim.h"
+#include "ibex_BitSet.h"
 #include "ibex_DoubleIndex.h"
 
 namespace ibex {
@@ -70,6 +71,27 @@ public:
 	 *  The internal domain will point to \a m.
 	 */
 	explicit TemplateDomain(typename D::MATRIX& m1);
+
+	/**
+	 * \brief Creates a reference to an interval.
+	 *
+	 * The internal domain will point to \a itv.
+	 */
+	explicit TemplateDomain(const typename D::SCALAR& itv);
+
+	/**
+	 * \brief Creates a reference to an interval vector.
+	 *
+	 *  The internal domain will point to \a v.
+	 */
+	explicit TemplateDomain(const typename D::VECTOR& v1, bool in_row);
+
+	/**
+	 * \brief Creates a reference to an interval matrix.
+	 *
+	 *  The internal domain will point to \a m.
+	 */
+	explicit TemplateDomain(const typename D::MATRIX& m1);
 
 	/**
 	 * \brief Creates a domain by copy.
@@ -192,6 +214,12 @@ public:
 	/** Return true only if unbounded. */
 	bool is_unbounded() const;
 
+	/** Return the lower bound */
+	TemplateDomain<D> lb() const;
+
+	/** Return the upper bound */
+	TemplateDomain<D> ub() const;
+
 private:
 
 	TemplateDomain();
@@ -214,33 +242,61 @@ std::ostream& operator<<(std::ostream& os,const TemplateDomain<D>&);
  * \brief Load domains from a flat vector
  */
 template<class D>
-void load(Array<TemplateDomain<D> >& domains, const typename D::VECTOR& box, int nb_used=-1, const int* used=NULL);
+void load(Array<TemplateDomain<D> >& domains, const typename D::VECTOR& box, const std::vector<int>& used);
+
+/**
+ * \brief Load domains from a flat vector
+ */
+template<class D>
+void load(Array<TemplateDomain<D> >& domains, const typename D::VECTOR& box);
 
 /**
  * \brief Load domains into an interval vector.
  */
 template<class D>
-inline void load(typename D::VECTOR& box, const Array<const TemplateDomain<D> >& domains, int nb_used=-1, const int* used=NULL) {
-	load(box, (const Array<TemplateDomain<D> >&) domains, nb_used, used);
-}
+void load(typename D::VECTOR& box, const Array<const TemplateDomain<D> >& domains, const std::vector<int>& used);
 
 /**
  * \brief Load domains into an interval vector.
  */
 template<class D>
-void load(typename D::VECTOR& box, const Array<TemplateDomain<D> >& domains, int nb_used=-1, const int* used=NULL);
+void load(typename D::VECTOR& box, const Array<const TemplateDomain<D> >& domains);
 
 /**
- * \brief x:=y
+ * \brief Load domains into an interval vector.
  */
 template<class D>
-void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y, int nb_used=-1, const int* used=NULL);
+void load(typename D::VECTOR& box, const Array<TemplateDomain<D> >& domains, const std::vector<int>& used);
 
 /**
- * \brief x:=y
+ * \brief Load domains into an interval vector.
  */
 template<class D>
-void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y, int nb_used=-1, const int* used=NULL);
+void load(typename D::VECTOR& box, const Array<TemplateDomain<D> >& domains);
+
+/**
+ * \brief Load domains from domains.
+ */
+//template<class D>
+//void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y, const std::vector<int>& used);
+
+/**
+ * \brief Load domains from domains.
+ */
+//template<class D>
+//void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y);
+
+/**
+ * \brief Load domains from domains.
+ */
+template<class D>
+void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y, const std::vector<int>& used);
+
+/**
+ * \brief Load domains from domains.
+ */
+template<class D>
+void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y);
 
 /** Add two domains. */
 template<class D>
@@ -711,6 +767,30 @@ bool TemplateDomain<D>::is_unbounded() const {
 }
 
 template<class D>
+TemplateDomain<D> TemplateDomain<D>::lb() const {
+	TemplateDomain<D> res(dim);
+	switch (dim.type()) {
+	case Dim::SCALAR:       res.i()=i().lb(); break;
+	case Dim::ROW_VECTOR:
+	case Dim::COL_VECTOR:   res.v()=v().lb(); break;
+	case Dim::MATRIX:       res.m()=m().lb(); break;
+	}
+	return res;
+}
+
+template<class D>
+TemplateDomain<D> TemplateDomain<D>::ub() const {
+	TemplateDomain<D> res(dim);
+	switch (dim.type()) {
+	case Dim::SCALAR:       res.i()=i().ub(); break;
+	case Dim::ROW_VECTOR:
+	case Dim::COL_VECTOR:   res.v()=v().ub(); break;
+	case Dim::MATRIX:       res.m()=m().ub(); break;
+	}
+	return res;
+}
+
+template<class D>
 std::ostream& operator<<(std::ostream& os,const TemplateDomain<D>& d) {
 	switch (d.dim.type()) {
 		case Dim::SCALAR:       os << d.i(); break;
@@ -721,16 +801,18 @@ std::ostream& operator<<(std::ostream& os,const TemplateDomain<D>& d) {
 	return os;
 }
 
+// Note: in the load(...) functions we don't distinguish
+// an empty bitset from no bitset supplied.
 template<class D>
-void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, int nb_used, const int* used) {
+void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, const std::vector<int>& used) {
 	int i=0; // iterates over the components of box
-	int u=0; // iterates over the array "used"
+	std::vector<int>::const_iterator u=used.begin(); // iterates over the array "used"
 
-	for (int s=0; (nb_used==-1 || u<nb_used) && s<d.size(); s++) {
+	for (int s=0; (used.empty() || u!=used.end()) && s<d.size(); s++) {
 
 		const Dim& dim=d[s].dim;
 
-		if (nb_used!=-1 && used[u]>=i+dim.size()) {  // next used component is after this symbol
+		if (!used.empty() && *u>=i+dim.size()) { // next used component is after this symbol
 			i+=dim.size();
 			continue; // skip this symbol
 		}
@@ -739,10 +821,13 @@ void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, int nb_used
 		// (i.e. they have to be copied in x).
 		switch (dim.type()) {
 		case Dim::SCALAR:
-			if (nb_used==-1 || i==used[u]) {
+			if (used.empty()) {
 				d[s].i()=x[i];
-				u++; // note: if nb_used==-1, u is incremented for nothing
-				if (u==nb_used) return; // otherwise next test "i==used[u]" is a memory fault
+			}
+			else if (i==*u) {
+				d[s].i()=x[i];
+				++u; // note: if used.empty(), u is incremented for nothing
+				if (u==used.end()) return; // otherwise next test "i==u" is a memory fault
 			}
 			i++;
 			break;
@@ -751,10 +836,13 @@ void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, int nb_used
 		{
 			typename D::VECTOR& v=d[s].v();
 			for (int j=0; j<dim.vec_size(); j++) {
-				if (nb_used==-1 || i==used[u]) {
+				if (used.empty()) {
 					v[j]=x[i];
-					u++;
-					if (u==nb_used) return;
+				}
+				else if (i==*u) {
+					v[j]=x[i];
+					++u;
+					if (u==used.end()) return;
 				}
 				i++;
 			}
@@ -766,10 +854,13 @@ void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, int nb_used
 			typename D::MATRIX& M=d[s].m();
 			for (int k=0; k<dim.nb_rows(); k++)
 				for (int j=0; j<dim.nb_cols(); j++) {
-					if (nb_used==-1 || i==used[u]) {
+					if (used.empty()) {
 						M[k][j]=x[i];
-						u++;
-						if (u==nb_used) return;
+					}
+					else if (i==*u) {
+						M[k][j]=x[i];
+						++u;
+						if (u==used.end()) return;
 					}
 					i++;
 				}
@@ -777,20 +868,38 @@ void load(Array<TemplateDomain<D> >& d, const typename D::VECTOR& x, int nb_used
 		break;
 		}
 	}
-	assert(nb_used==-1 || u==nb_used);
+	assert(used.empty() || u==used.end());
 }
 
+template<class D>
+void load(Array<TemplateDomain<D> >& domains, const typename D::VECTOR& box) {
+	std::vector<int> b;
+	for (int i=0; i<box.size(); i++) b.push_back(i);
+	load(domains,box,b);
+}
 
 template<class D>
-void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, int nb_used, const int* used) {
-	int i=0; // iterates over the components of box
-	int u=0; // iterates over the array "used"
+inline void load(typename D::VECTOR& box, const Array<const TemplateDomain<D> >& domains, const std::vector<int>& used) {
+	load(box, (const Array<TemplateDomain<D> >&) domains, used);
+}
 
-	for (int s=0; (nb_used==-1 || u<nb_used) && s<d.size(); s++) {
+template<class D>
+inline void load(typename D::VECTOR& box, const Array<const TemplateDomain<D> >& domains) {
+	std::vector<int> b;
+	for (int i=0; i<box.size(); i++) b.push_back(i);
+	load(box, domains, b);
+}
+
+template<class D>
+void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, const std::vector<int>& used) {
+	int i=0; // iterates over the components of box
+	std::vector<int>::const_iterator u=used.begin(); // iterates over the array "used"
+
+	for (int s=0; (used.empty() || u!=used.end()) && s<d.size(); s++) {
 
 		const Dim& dim=d[s].dim;
 
-		if (nb_used!=-1 && used[u]>=i+dim.size()) {  // next used component is after this symbol
+		if (!used.empty() && *u>=i+dim.size()) {  // next used component is after this symbol
 			i+=dim.size();
 			continue; // skip this symbol
 		}
@@ -799,10 +908,13 @@ void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, int nb_used
 		// (i.e. they have to be copied in x).
 		switch (dim.type()) {
 		case Dim::SCALAR:
-			if (nb_used==-1 || i==used[u]) {
+			if (used.empty()) {
 				if ((x[i]=d[s].i()).is_empty()) { x.set_empty(); return; }
-				u++; // if nb_used==-1, u is incremented for nothing
-				if (u==nb_used) return; // otherwise next test "i==used[u]" is a memory fault
+			}
+			else if (i==*u) {
+				if ((x[i]=d[s].i()).is_empty()) { x.set_empty(); return; }
+				++u;
+				if (u==used.end()) return; // otherwise next test "i==u" is a memory fault
 			}
 			i++;
 			break;
@@ -811,10 +923,13 @@ void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, int nb_used
 		{
 			const typename D::VECTOR& v=d[s].v();
 			for (int j=0; j<dim.vec_size(); j++) {
-				if (nb_used==-1 || i==used[u]) {
+				if (used.empty()) {
 					if ((x[i]=v[j]).is_empty()) { x.set_empty(); return; }
-					u++;
-					if (u==nb_used) return;
+				}
+				else if (i==*u) {
+					if ((x[i]=v[j]).is_empty()) { x.set_empty(); return; }
+					++u;
+					if (u==used.end()) return;
 				}
 				i++;
 			}
@@ -826,10 +941,13 @@ void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, int nb_used
 			const typename D::MATRIX& M=d[s].m();
 			for (int k=0; k<dim.nb_rows(); k++)
 				for (int j=0; j<dim.nb_cols(); j++) {
-					if (nb_used==-1 || i==used[u]) {
+					if (used.empty()) {
 						if ((x[i]=M[k][j]).is_empty()) { x.set_empty(); return; }
-						u++;
-						if (u==nb_used) return;
+					}
+					else if (i==*u) {
+						if ((x[i]=M[k][j]).is_empty()) { x.set_empty(); return; }
+						++u;
+						if (u==used.end()) return;
 					}
 					i++;
 				}
@@ -837,25 +955,32 @@ void load(typename D::VECTOR& x, const Array<TemplateDomain<D> >& d, int nb_used
 		break;
 		}
 	}
-	assert(nb_used==-1 || u==nb_used);
+	assert(used.empty() || u==used.end());
 }
 
 template<class D>
-void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y, int nb_used, const int* used) {
+inline void load(typename D::VECTOR& box, const Array<TemplateDomain<D> >& domains) {
+	std::vector<int> b;
+	for (int i=0; i<box.size(); i++) b.push_back(i);
+	load(box, domains, b);
+}
+
+template<class D>
+void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y, const std::vector<int>& used) {
 	assert(x.size()==y.size());
-	if (nb_used==-1)
+	if (used.empty())
 		for (int s=0; s<x.size(); s++)
 			x[s]=y[s];
 	else {
 
 		int i=0; // iterates over the components of box
-		int u=0; // iterates over the array "used"
+		std::vector<int>::const_iterator u=used.begin(); // iterates over the array "used"
 
-		for (int s=0; u<nb_used && s<y.size(); s++) {
+		for (int s=0; u!=used.end() && s<y.size(); s++) {
 
 			const Dim& dim=y[s].dim;
 
-			if (used[u]>=i+dim.size()) {  // next used component is after this symbol
+			if (*u>=i+dim.size()) {  // next used component is after this symbol
 				i+=dim.size();
 				continue; // skip this symbol
 			}
@@ -864,10 +989,10 @@ void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y
 			// (i.e. they have to be copied in x).
 			switch (dim.type()) {
 			case Dim::SCALAR:
-				if (i==used[u]) {
+				if (i==*u) {
 					x[s]=y[s];
-					u++; // if nb_used==-1, u is incremented for nothing
-					if (u==nb_used) return;
+					++u; // if used.empty(), u is incremented for nothing
+					if (u==used.end()) return;
 				}
 				i++;
 				break;
@@ -876,10 +1001,10 @@ void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y
 				// note that it is then possible to load a row vector
 				// into a column vector (and this flexibility is desired)
 				for (int j=0; j<dim.nb_cols(); j++) {
-					if (i==used[u]) {
+					if (i==*u) {
 						x[s][j]=y[s][j];
-						u++;
-						if (u==nb_used) return;
+						++u;
+						if (u==used.end()) return;
 					}
 					i++;
 				}
@@ -890,10 +1015,10 @@ void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y
 				// note that it is then possible to load a column vector
 				// into a row vector (and this flexibility is desired)
 				for (int j=0; j<dim.nb_rows(); j++) {
-					if (i==used[u]) {
+					if (i==*u) {
 						x[s][j]=y[s][j];
-						u++;
-						if (u==nb_used) return;
+						++u;
+						if (u==used.end()) return;
 					}
 					i++;
 				}
@@ -904,10 +1029,10 @@ void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y
 			{
 				for (int k=0; k<dim.nb_rows(); k++)
 					for (int j=0; j<dim.nb_cols(); j++) {
-						if (i==used[u]) {
+						if (i==*u) {
 							x[s][k][j]=y[s][k][j];
-							u++;
-							if (u==nb_used) return;
+							++u;
+							if (u==used.end()) return;
 						}
 						i++;
 					}
@@ -915,19 +1040,32 @@ void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y
 			break;
 			}
 		}
-		assert(nb_used==-1 || u==nb_used);
+		assert(used.empty() || u==used.end());
 	}
 
 	// if "used" was referring symbols directly,
 	// a much simpler code would be...
-	//for (int u=0; u<nb_used; u++)
-	//	x[used[u]]=y[used[u]];
+	//for (int u=0; u<nb_used; ++u)
+	//	x[u]=y[u];
 }
 
+//template<class D>
+//void load(Array<TemplateDomain<D> >& x, const Array<const TemplateDomain<D> >& y) {
+//	std::vector<int> b;
+//	//for (int i=0; i<box.size(); i++) b.push_back(i);
+//	load(x,y,b);
+//}
+
 template<class D>
-void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y, int nb_used, const int* used) {
-	load(x,(const Array<const TemplateDomain<D> >&) y, nb_used,used);
+inline void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y, const std::vector<int>& used) {
+	load(x,(const Array<const TemplateDomain<D> >&) y, used);
 }
+
+//template<class D>
+//inline void load(Array<TemplateDomain<D> >& x, const Array<TemplateDomain<D> >& y) {
+//	std::vector<int> b;
+//	load(x,y,b);
+//}
 
 template<class D>
 TemplateDomain<D> operator+(const TemplateDomain<D>& d1, const TemplateDomain<D>& d2) {

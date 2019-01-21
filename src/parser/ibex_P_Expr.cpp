@@ -54,6 +54,13 @@ Domain P_ExprNode::_2domain() const {
 	return ExprGenerator().generate_cst(*this);
 }
 
+Interval P_ExprNode::_2itv() const {
+	Domain d=_2domain();
+	if (d.dim.type()!=Dim::SCALAR)
+		ibexerror("interval expected");
+	return d.i();
+}
+
 ostream& operator<<(ostream& os, const P_ExprNode& e) {
 	P_ExprPrinter p(os,e);
 	return os;
@@ -123,6 +130,22 @@ P_ExprConstant::P_ExprConstant(const Domain& d) : P_ExprNode(CST), value(d) {
 
 P_ExprApply::P_ExprApply(const Function& f, const Array<const P_ExprNode>& args) :
 		P_ExprNode(APPLY,args), f(f) {
+}
+
+P_ExprGenericUnaryOp::P_ExprGenericUnaryOp(const char* name, const P_ExprNode& expr) :
+		P_ExprNode(UNARY_OP,expr), name(strdup(name)) {
+}
+
+P_ExprGenericUnaryOp::~P_ExprGenericUnaryOp() {
+	free((char*) name);
+}
+
+P_ExprGenericBinaryOp::P_ExprGenericBinaryOp(const char* name, const P_ExprNode& left, const P_ExprNode& right) :
+		P_ExprNode(BINARY_OP,left,right), name(strdup(name)) {
+}
+
+P_ExprGenericBinaryOp::~P_ExprGenericBinaryOp() {
+	free((char*) name);
 }
 
 const P_ExprNode* apply(Function& f, const Array<const P_ExprNode>& args) {

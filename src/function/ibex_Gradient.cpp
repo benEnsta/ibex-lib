@@ -166,6 +166,13 @@ void Gradient::jacobian(const IntervalVector& box, IntervalMatrix& J, const BitS
 
 			g.read_arg_domains(J.row(i));
 
+			// // uncomment this to inspect the previous computation:
+//
+//			const Agenda& a=*(_eval.bwd_agenda[c]);
+//			for (int z=a.first(); z!=a.end(); z=a.next(z)) {
+//				cout << "  " << d[z] << '\t' << g[z] << '\t' << f.node(z) << endl;
+//			}
+
 			if (J.row(i).is_empty()) {
 				J.set_empty();
 				return;
@@ -454,6 +461,18 @@ void Gradient::abs_bwd (int x, int y) {
 void Gradient::atan2_bwd(int x1, int x2, int y) {
     g[x1].i() += g[y].i() * d[x2].i() / (sqr(d[x2].i()) + sqr(d[x1].i()));
     g[x2].i() += g[y].i() * - d[x1].i() / (sqr(d[x2].i()) + sqr(d[x1].i()));
+}
+
+void Gradient::gen2_bwd(int x1, int x2, int y) {
+	/* TODO */
+}
+
+void Gradient::gen1_bwd(int x, int y) {
+	assert(dynamic_cast<const ExprGenericUnaryOp*>(&(f.node(y))));
+
+	const ExprGenericUnaryOp& e = (const ExprGenericUnaryOp&) f.node(y);
+
+	g[x] = g[x] + e.num_diff(d[x],g[y]); // TODO: implement += for Domain?
 }
 
 } // namespace ibex

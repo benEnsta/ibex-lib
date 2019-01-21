@@ -13,6 +13,7 @@
 #include "ibex_Vector.h"
 #include "ibex_Exception.h"
 #include "ibex_System.h"
+#include "ibex_BoxProperties.h"
 
 #include <utility>
 
@@ -56,6 +57,13 @@ public:
 	virtual std::pair<IntervalVector, double> find(const IntervalVector& box, const IntervalVector& loup_point, double loup)=0;
 
 	/**
+	 * \brief Find a new loup in a given box.
+	 *
+	 * Default implementation: call find(...).
+	 */
+	virtual std::pair<IntervalVector, double> find(const IntervalVector& box, const IntervalVector& loup_point, double loup, BoxProperties& prop);
+
+	/**
 	 * \brief True if equalities are accepted.
 	 *
 	 * This function is abstract and may be overriden in the subclass.
@@ -65,6 +73,13 @@ public:
 	virtual bool rigorous() const {
 		return false;
 	}
+
+	/**
+	 * \brief Add properties required by this loup finder.
+	 *
+	 * By default: add nothing.
+	 */
+	virtual void add_property(const IntervalVector& init_box, BoxProperties& prop);
 
 	/**
 	 * \brief Delete this.
@@ -102,6 +117,12 @@ protected:
 	void monotonicity_analysis(const System& sys, IntervalVector& box, bool is_inner);
 
 };
+
+/*================================== inline implementations ========================================*/
+
+inline std::pair<IntervalVector, double> LoupFinder::find(const IntervalVector& box, const IntervalVector& loup_point, double loup, BoxProperties& prop) {
+	return find(box,loup_point,loup);
+}
 
 } /* namespace ibex */
 

@@ -27,7 +27,7 @@ namespace {
 Solver::Solver(const System& sys, Ctc& ctc, Bsc& bsc, CellBuffer& buffer,
 		const Vector& eps_x_min, const Vector& eps_x_max) :
 		  ctc(ctc), bsc(bsc), buffer(buffer), eps_x_min(eps_x_min), eps_x_max(eps_x_max),
-		  boundary_test(ALL_TRUE), time_limit(-1), cell_limit(-1), trace(0), impact(BitSet::all(ctc.nb_var)),
+		  boundary_test(ALL_TRUE), time_limit(-1), cell_limit(-1), trace(0),
 		  solve_init_box(sys.box), eqs(NULL), ineqs(NULL),
 		  params(sys.nb_var,BitSet::empty(sys.nb_var),false) /* no forced parameter by default */,
 		  manif(NULL), time(0), nb_cells(0) {
@@ -59,7 +59,34 @@ Solver::Solver(const System& sys, Ctc& ctc, Bsc& bsc, CellBuffer& buffer,
 	if (m==0 || m==n)
 		boundary_test=ALL_FALSE;
 
-	manif = new Manifold(n,m,nb_ineq);
+	if (m>n)
+		ibex_warning("Certification not implemented for over-constrained systems ");
+}
+
+void Solver::set_var_names() {
+
+	const System& sys=eqs? *eqs : *ineqs;
+
+	int v=0;
+	for (int s=0; s<sys.args.size(); s++) {
+		const ExprSymbol& x=sys.args[s];
+		switch (x.dim.type()) {
+		case Dim::SCALAR:
+			manif->var_names[v++].assign(x.name);
+			break;
+		case Dim::ROW_VECTOR:
+		case Dim::COL_VECTOR:
+			for (int i=0; i<x.dim.vec_size(); i++)
+				manif->var_names[v++].assign(string(x.name)+'('+to_string(i+1)+')');
+			break;
+		default: // MATRIX
+			for (int i=0; i<x.dim.nb_rows(); i++)
+				for (int j=0; j<x.dim.nb_cols(); j++)
+					manif->var_names[v++].assign(string(x.name)+'('+to_string(i+1)+','+to_string(j+1)+')');
+			break;
+		}
+	}
+	assert(v==sys.nb_var);
 }
 
 void Solver::set_params(const VarSet& _params) {
@@ -78,19 +105,24 @@ Solver::~Solver() {
 }
 
 void Solver::start(const IntervalVector& init_box) {
+
 	buffer.flush();
 
 	if (manif) delete manif;
 
 	manif = new Manifold(n,m,nb_ineq);
 
+	set_var_names();
+
 	Cell* root=new Cell(init_box);
 
-	// add data required by this solver
-	root->add<BisectedVar>();
-
 	// add data required by the bisector
-	bsc.add_backtrackable(*root);
+	bsc.add_property(init_box, root->prop);
+
+	// add data required by the contractor
+	ctc.add_property(init_box, root->prop);
+
+	buffer.add_property(init_box, root->prop);
 
 	buffer.push(root);
 	nb_cells = 1;
@@ -107,7 +139,11 @@ void Solver::start(const char* input_paving) {
 	manif = new Manifold(n,m,nb_ineq);
 	manif->load(input_paving);
 
-	vector<SolverOutputBox>::const_iterator it=manif->unknown.begin();
+	// may erase former variable names if the input paving was actually
+	// not calculated with the same minibex file.
+	set_var_names();
+
+	vector<QualifiedBox>::const_iterator it=manif->unknown.begin();
 
 	// the unknown and pending boxes have to be processed
 	while (it!=manif->pending.end()) {
@@ -118,11 +154,13 @@ void Solver::start(const char* input_paving) {
 
 		Cell* cell=new Cell(it->existence());
 
-		// add data required by this solver
-		cell->add<BisectedVar>();
+		buffer.add_property(it->existence(), cell->prop);
 
 		// add data required by the bisector
-		bsc.add_backtrackable(*cell);
+		bsc.add_property(it->existence(), cell->prop);
+
+		// add data required by the contractor
+		ctc.add_property(it->existence(), cell->prop);
 
 		buffer.push(cell);
 
@@ -137,7 +175,7 @@ void Solver::start(const char* input_paving) {
 	timer.restart();
 }
 
-SolverOutputBox* Solver::next() {
+QualifiedBox* Solver::next() {
 	while (!buffer.empty()) {
 		if (time_limit >0) timer.check(time_limit);
 
@@ -145,30 +183,26 @@ SolverOutputBox* Solver::next() {
 
 		Cell* c=buffer.top();
 
-		int v=c->get<BisectedVar>().var;      // last bisected var.
+		ContractContext context(c->prop);
 
-		if (v!=-1)                          // no root node :  impact set to 1 for last bisected var only
-			impact.add(v);
-		else                                // root node : impact set to 1 for all variables
-			impact.fill(0,ctc.nb_var-1);
+		int v=c->bisected_var; // last bisected var.
+
+		if (v!=-1) { // not the root node :  impact set to the last bisected variable only
+			context.impact = BitSet::singleton(n,v);
+		}
 
 		try {
-			ctc.contract(c->box,impact);
+			ctc.contract(c->box,context);
 
 			if (c->box.is_empty()) throw EmptyBoxException();
-
-			if (v!=-1)
-				impact.remove(v);
-			else                              // root node : impact set to 0 for all variables after contraction
-				impact.clear();
 
 			// certification is performed at each intermediate step
 			// if the system is under constrained
 			if (!c->box.is_empty() && m<n) {
 				// note: cannot return PENDING status
-				SolverOutputBox new_sol=check_sol(c->box);
-				if (new_sol.status!=SolverOutputBox::UNKNOWN) {
-					if ((m==0 && new_sol.status==SolverOutputBox::INNER) ||
+				QualifiedBox new_sol=check_sol(c->box);
+				if (new_sol.status!=QualifiedBox::UNKNOWN) {
+					if ((m==0 && new_sol.status==QualifiedBox::INNER) ||
 							!is_too_large(new_sol.existence())) {
 						delete buffer.pop();
 						return &store_sol(new_sol);
@@ -196,7 +230,7 @@ SolverOutputBox* Solver::next() {
 			}
 
 			catch (NoBisectableVariableException&) {
-				SolverOutputBox new_sol=check_sol(c->box);
+				QualifiedBox new_sol=check_sol(c->box);
 				delete buffer.pop();
 				return &store_sol(new_sol);
 			}
@@ -206,10 +240,6 @@ SolverOutputBox* Solver::next() {
 			//impact.remove(v); // note: in case of the root node, we should clear the bitset
 			// instead but since the search is over, the impact is not used anymore.
 			// JN: that make a bug with Mingw
-			if (v!=-1)                          // no root node :  impact set to 1 for last bisected var only
-				impact.remove(v);
-			else                                // root node : impact set to 1 for all variables
-				impact.clear();
 
 			continue;
 		}
@@ -260,80 +290,91 @@ Solver::Status Solver::solve() {
 }
 
 
-SolverOutputBox Solver::check_sol(const IntervalVector& box) {
+QualifiedBox Solver::check_sol(const IntervalVector& box) {
 
-	SolverOutputBox sol(n);
-
-	(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::INNER; // by default
+	//QualifiedBox sol(n);
+	QualifiedBox::sol_status status = QualifiedBox::INNER; // by default
+	IntervalVector existence(box);
+	IntervalVector* unicity = NULL;
+	VarSet* varset = NULL;
 
 	if (eqs) {
 
-		sol._unicity=new IntervalVector(n);
-
 		if (m>n) {
-			ibex_warning("Certification not implemented for over-constrained systems ");
-			(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::UNKNOWN;
+			// Certification not implemented for over-constrained systems
+			status = QualifiedBox::UNKNOWN;
 		} else if (m<n) {
 			// ====== under-constrained =========
 			try {
-				VarSet varset=get_newton_vars(eqs->f_ctrs,box.mid(),params);
 
-				if (inflating_newton(eqs->f_ctrs, varset, box, sol._existence, *sol._unicity)) {
+				unicity = new IntervalVector(n);
+
+				VarSet _varset=get_newton_vars(eqs->f_ctrs,box.mid(),params);
+
+				if (inflating_newton(eqs->f_ctrs, _varset, box, existence, *unicity)) {
 					if (params.nb_param<n-m)
-						sol.varset = new VarSet(varset);
+						varset = new VarSet(_varset);
 				} else
-					(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::UNKNOWN;
+					status = QualifiedBox::UNKNOWN;
 
 			} catch(SingularMatrixException& e) {
-				(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::UNKNOWN;
+				status = QualifiedBox::UNKNOWN;
 			}
 		} else {
 			// ====== well-constrained =========
-			if (!inflating_newton(eqs->f_ctrs, box.mid(), sol._existence, *sol._unicity)) {
-				(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::UNKNOWN;
+			unicity = new IntervalVector(n);
+
+			if (!inflating_newton(eqs->f_ctrs, box.mid(), existence, *unicity)) {
+				status = QualifiedBox::UNKNOWN;
 			}
 		}
-	} else {
-		sol._existence=box;
-		sol._unicity=NULL;
 	}
 
-	if (sol.status==SolverOutputBox::UNKNOWN) {
-		sol._existence=box;
-		if (sol._unicity!=NULL) delete sol._unicity;
-		sol._unicity=NULL;
+	if (status==QualifiedBox::UNKNOWN) {
+		existence = box;
+		if (unicity!=NULL) delete unicity;
+		unicity=NULL;
+		assert(varset==NULL);
 	} else {
 		// The inflating Newton may cause the existence box to be disjoint from the input box.
 
 		// Note that the following line also tests the case of an existence box outside
 		// the initial box of the search
-		if (box.is_disjoint(sol.existence())) {
+		if (box.is_disjoint(existence)) {
+			if (unicity) delete unicity;
+			if (varset) delete varset;
 			throw EmptyBoxException();
 		}
 	}
 
-	if (sol.status==SolverOutputBox::INNER && !sol.existence().is_subset(solve_init_box))
+	if (status==QualifiedBox::INNER && !existence.is_subset(solve_init_box))
 		// BOUNDARY by default: will be verified later
-		(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::BOUNDARY;
+		status = QualifiedBox::BOUNDARY;
 
 	if (ineqs) {
 		Interval y,r;
 		for (int i=0; i<ineqs->nb_ctr; i++) {
 			NumConstraint& c=ineqs->ctrs[i];
 			assert(c.f.image_dim()==1);
-			y=c.f.eval(sol.existence());
+			y=c.f.eval(existence);
 			r=c.right_hand_side().i();
-			if (y.is_disjoint(r)) throw EmptyBoxException();
-			if (sol.status==SolverOutputBox::INNER && !y.is_subset(r)) {
+
+			if (y.is_disjoint(r)) {
+				if (unicity) delete unicity;
+				if (varset) delete varset;
+				throw EmptyBoxException();
+			}
+
+			if (status==QualifiedBox::INNER && !y.is_subset(r)) {
 				// BOUNDARY by default: will be verified later
-				(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::BOUNDARY;
+				status = QualifiedBox::BOUNDARY;
 			}
 		}
 	}
 
-	if (sol.status==SolverOutputBox::BOUNDARY) {
-		if (!is_boundary(sol.existence()))
-			(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::UNKNOWN;
+	if (status==QualifiedBox::BOUNDARY) {
+		if (!is_boundary(existence))
+			status = QualifiedBox::UNKNOWN;
 
 	}
 
@@ -342,13 +383,16 @@ SolverOutputBox Solver::check_sol(const IntervalVector& box) {
 		// box of a previously found solution. For efficiency reason, this test is not performed in
 		// the case of under-constrained systems (m<n).
 
-		for (vector<SolverOutputBox>::iterator it=manif->inner.begin(); it!=manif->inner.end(); it++) {
-			if (it->unicity().is_superset(sol._existence))
+		for (vector<QualifiedBox>::iterator it=manif->inner.begin(); it!=manif->inner.end(); it++) {
+			if (it->unicity().is_superset(existence)) {
+				if (unicity) delete unicity;
+				if (varset) delete varset;
 				throw EmptyBoxException();
+			}
 		}
 	}
 
-	return sol;
+	return QualifiedBox(existence,status,unicity,varset);
 }
 
 bool Solver::is_boundary(const IntervalVector& box) {
@@ -408,21 +452,21 @@ bool Solver::is_too_large(const IntervalVector& box) {
 	return false;
 }
 
-SolverOutputBox& Solver::store_sol(const SolverOutputBox& sol) {
+QualifiedBox& Solver::store_sol(const QualifiedBox& sol) {
 
 	if (trace >=1) cout << sol << endl;
 
 	switch (sol.status) {
-	case SolverOutputBox::INNER    :
+	case QualifiedBox::INNER    :
 		manif->inner.push_back(sol);
 		return manif->inner.back();
-	case SolverOutputBox::BOUNDARY :
+	case QualifiedBox::BOUNDARY :
 		manif->boundary.push_back(sol);
 		return manif->boundary.back();
-	case SolverOutputBox::UNKNOWN  :
+	case QualifiedBox::UNKNOWN  :
 		manif->unknown.push_back(sol);
 		return manif->unknown.back();
-	case SolverOutputBox::PENDING :
+	case QualifiedBox::PENDING :
 	default:
 		manif->pending.push_back(sol);
 		return manif->pending.back();
@@ -432,10 +476,7 @@ SolverOutputBox& Solver::store_sol(const SolverOutputBox& sol) {
 void Solver::flush() {
 	while (!buffer.empty()) {
 		Cell* cell=buffer.top();
-		SolverOutputBox sol(n);
-		(SolverOutputBox::sol_status&) sol.status = SolverOutputBox::PENDING;
-		sol._existence=cell->box;
-		sol._unicity=NULL;
+		QualifiedBox sol(cell->box,QualifiedBox::PENDING);
 		store_sol(sol);
 		delete buffer.pop();
 	}
@@ -464,7 +505,7 @@ void Solver::report() {
 	cout << " cpu time used:\t\t\t" << time << "s";
 	if (manif->time!=time)
 		cout << " [total=" << manif->time << "]";
-		cout << endl;
+	cout << endl;
 	cout << " number of cells:\t\t" << nb_cells;
 	if (manif->nb_cells!=nb_cells)
 		cout << " [total=" << manif->nb_cells << "]";

@@ -128,12 +128,14 @@ IntervalVector Eval::eval(const IntervalVector& box, const BitSet& components) {
 
 	try {
 		f.cf.forward<Eval>(*this,a);
+
+		for (int i=0; i<m; i++) {
+			c = (i==0 ? components.min() : components.next(c));
+			res[i] = d[bwd_agenda[c]->first()].i();
+		}
 	} catch(EmptyBoxException&) {
 		d.top->set_empty();
-	}
-	for (int i=0; i<m; i++) {
-		c = (i==0 ? components.min() : components.next(c));
-		res[i] = d[bwd_agenda[c]->first()].i();
+		res.set_empty();
 	}
 
 	return res;
@@ -212,5 +214,20 @@ void Eval::vector_fwd(int* x, int y) {
 	}
 
 }
+
+void Eval::gen1_fwd(int x, int y) {
+	assert(dynamic_cast<const ExprGenericUnaryOp*>(&(f.node(y))));
+
+	const ExprGenericUnaryOp& e = (const ExprGenericUnaryOp&) f.node(y);
+	d[y]=e.eval(d[x]);
+}
+
+void Eval::gen2_fwd(int x1, int x2, int y) {
+	assert(dynamic_cast<const ExprGenericBinaryOp*>(&(f.node(y))));
+
+	const ExprGenericBinaryOp& e = (const ExprGenericBinaryOp&) f.node(y);
+	d[y]=e.eval(d[x1],d[x2]);
+}
+
 
 } // namespace ibex

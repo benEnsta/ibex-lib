@@ -20,7 +20,11 @@ LoupFinderXTaylor::LoupFinderXTaylor(const System& sys) : sys(sys), lr(sys,Linea
 //	diam_simplex=0;
 }
 
-std::pair<IntervalVector, double> LoupFinderXTaylor::find(const IntervalVector& box, const IntervalVector&, double current_loup) {
+void LoupFinderXTaylor::add_property(const IntervalVector& init_box, BoxProperties& prop) {
+	lr.add_property(init_box,prop);
+}
+
+std::pair<IntervalVector, double> LoupFinderXTaylor::find(const IntervalVector& box, const IntervalVector&, double current_loup, BoxProperties& prop) {
 
 	if (!(lp_solver.default_limit_diam_box.contains(box.max_diam())))
 		throw NotFound();
@@ -30,7 +34,7 @@ std::pair<IntervalVector, double> LoupFinderXTaylor::find(const IntervalVector& 
 	lp_solver.clean_ctrs();
 	lp_solver.set_bounds(box);
 
-	IntervalVector ig=sys.goal_gradient(box.mid());
+	IntervalVector ig=sys.goal->gradient(box.mid());
 	if (ig.is_empty()) // unfortunately, at the midpoint the function is not differentiable
 		throw NotFound(); // not a big deal: wait for another box...
 
@@ -41,7 +45,7 @@ std::pair<IntervalVector, double> LoupFinderXTaylor::find(const IntervalVector& 
 	for (int j=0; j<n; j++)
 		lp_solver.set_obj_var(j,g[j]);
 
-	int count = lr.linearize(box,lp_solver);
+	int count = lr.linearize(box,lp_solver,prop);
 
 	if (count==-1) {
 		lp_solver.clean_ctrs();

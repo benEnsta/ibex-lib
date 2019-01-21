@@ -133,22 +133,23 @@ Set Exploration
 The internal structure of sets is not intended to be handled directly by users (and may actually change with time).
 If you want to explore a set, you can use the ``SetVisitor`` class (following the
 `visitor design pattern`_) . This class must implement a ``visit_leaf``
-function that will be automatically called for every leaf of the set (it can also optionnaly implement a ``visit_node``
-function that is called for every intermediate node in the tree).
+function that will be automatically called for every leaf of the set. It can also optionnaly implement a ``visit_node``
+function that is called for every intermediate node in the tree, and tell wether or not to visit children of the current
+node by returning true (default) or false.
 
 .. _visitor design pattern : http://en.wikipedia.org/wiki/Visitor_pattern
 
 A typical usage of a set visitor is for listing or plotting the set and we shall illustrate the mechanism for such usage.
 
 The ``visit_leaf`` function  must take in argument the information that characterizes a leaf, namely, a box (``IntervalVector``) and a status
-(``BoolInterval``). Here is an example that simply dispaly the box and the status of a leaf in the standard output:
+(``BoolInterval``). Here is an example that simply display the box and the status of a leaf in the standard output:
 
 .. literalinclude:: ../examples/doc-set.cpp    
    :language: cpp
    :start-after: set-visit-1-C
    :end-before: set-visit-1-C
    
-Now the following code :ref:`load a set <set-file>` from a file an list all the boxes inside:
+Now the following code :ref:`loads a set <set-file>` from a file an lists all the boxes inside:
 
 
 .. literalinclude:: ../examples/doc-set.cpp    
@@ -163,7 +164,7 @@ The result is:
 |   :start-after:  set-visit-2-O                     |    :width: 300 px                           |
 |   :end-before:   set-visit-2-O                     |    :align: center                           |
 +----------------------------------------------------+---------------------------------------------+
-+  **Visiting the set with** ``ToPlot``              | **Visiting the set with** ``ToVibes``       |
++  **Visiting the set with** ``ToConsole``           | **Visiting the set with** ``ToVibes``       |
 +----------------------------------------------------+---------------------------------------------+
 
 .. _set-plot:
