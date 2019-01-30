@@ -103,7 +103,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/numeric)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/symbolic)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../plugins/solver/src)
 
-foreach( dir ${DIR_LIST})
+foreach(dir ${DIR_LIST})
 	message(STATUS ${dir})
 	file(GLOB dir_headers ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/*.h)
 	file(GLOB dir_headers_ ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/*.h_)
