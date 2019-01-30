@@ -45,6 +45,11 @@ endif()
 #disable warnings
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
+
+if ((${CMAKE_CXX_COMPILER_ID} MATCHES "Clang"))
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template -Wno-unknown-pragmas -Wno-logical-op-parentheses")
+endif()
+
 if(WIN32)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
