@@ -19,6 +19,15 @@
   #include "fmemopen.h"
 #endif
 
+#ifdef _MSC_VER
+FILE* fmemopen(void* data, int len, const char *mode ){
+	FILE * tempfile = tmpfile();
+	fwrite(data, len, 1, tempfile);
+	rewind(tempfile);
+	return tempfile;
+}
+#endif
+
 using namespace std;
 
 namespace ibex {

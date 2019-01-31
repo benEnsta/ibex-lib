@@ -1,5 +1,5 @@
 //============================================================================
-//                                  I B E X                                   
+//                                  I B E X
 // File        : TestParser.cpp
 // Author      : Gilles Chabert
 // Copyright   : Ecole des Mines de Nantes (France)
@@ -15,6 +15,19 @@
 #include "ibex_SyntaxError.h"
 #include "ibex_CtcFwdBwd.h"
 #include "Ponts30.h"
+#include <cstdio>
+#ifdef HAVE_FMEMOPEN
+  #include "fmemopen.h"
+#endif
+
+#ifdef _MSC_VER
+FILE* fmemopen(void* data, int len, const char *mode ){
+	FILE * tempfile = tmpfile();
+	fwrite(data, len, 1, tempfile);
+	rewind(tempfile);
+	return tempfile;
+}
+#endif
 
 using namespace std;
 
@@ -313,5 +326,3 @@ void TestParser::nary_max() {
 }
 
 } // end namespace
-
-

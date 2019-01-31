@@ -9,18 +9,27 @@ branches:
   only:
     - with_cmake
 environment:
+  CPPUNIT_INCLUDE_DIR: C:\tools\vcpkg\installed\x86-windows\include
+
   matrix:
     - CMAKE_PLATFORM: "Visual Studio 14 2015"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
     - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
 
+init:
+    - cmd: vcpkg cache
+cache:
+    - C:\tools\vcpkg\installed\
+install:
+    - vcpkg install cppunit
+
 build_script:
   - echo Running cmake...
   - cd c:\projects\ibex-lib
   - mkdir build
   - cd build
-  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF ../
+  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCPPUNIT_INCLUDE_DIR="%CPPUNIT_INCLUDE_DIR%" ../
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
@@ -40,7 +49,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: Bu9kqyFD6errPkHu23iueJXI5x7JZ/8ZHVwoYNB1ZijEQ7KOySfC/sJ0fKBDgFOA
-    
+
   artifact: ibex-lib,ibex-lib-zip
   draft: true
   prerelease: false
