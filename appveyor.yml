@@ -9,13 +9,18 @@ branches:
   only:
     - with_cmake
 environment:
-  CPPUNIT_INCLUDE_DIR: C:\tools\vcpkg\installed\x86-windows\include
 
   matrix:
     - CMAKE_PLATFORM: "Visual Studio 14 2015"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
+      platform: x86
+      CPPUNIT_INCLUDE_DIR: C:\tools\vcpkg\installed\x86-windows\include
+      CPPUNIT_LIBRARY: C:\tools\vcpkg\installed\x86-windows\lib\cppunit_dll.lib
     - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
       CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
+      platform: x64
+      CPPUNIT_INCLUDE_DIR: C:\tools\vcpkg\installed\x64-windows\include
+      CPPUNIT_LIBRARY: C:\tools\vcpkg\installed\x64-windows\lib\cppunit_dll.lib
 
 init:
     - cmd: vcpkg cache
@@ -29,7 +34,7 @@ build_script:
   - cd c:\projects\ibex-lib
   - mkdir build
   - cd build
-  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCPPUNIT_INCLUDE_DIR="%CPPUNIT_INCLUDE_DIR%" ../
+  - cmake -G "%CMAKE_PLATFORM%" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCPPUNIT_INCLUDE_DIR="%CPPUNIT_INCLUDE_DIR%" -DCPPUNIT_LIBRARY="%CPPUNIT_LIBRARY%" ../
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
