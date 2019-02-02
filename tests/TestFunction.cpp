@@ -17,10 +17,8 @@
 #include <sstream>
 #ifdef HAVE_FMEMOPEN
   #include "fmemopen.h"
-#endif
-
-#ifdef _MSC_VER
-FILE* fmemopen(void* data, int len, const char *mode ){
+#else
+inline FILE* fmemopen(void* data, int len, const char *mode ){
 	FILE * tempfile = tmpfile();
 	fwrite(data, len, 1, tempfile);
 	rewind(tempfile);
