@@ -27,7 +27,7 @@ init:
 cache:
     - C:\tools\vcpkg\installed\
 install:
-    - vcpkg install cppunit
+    - vcpkg install cppunit:"%platform%"-windows
 
 build_script:
   - echo Running cmake...
