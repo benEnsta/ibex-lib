@@ -15,14 +15,15 @@
 #include "ibex_Expr.h"
 #include "ibex_SyntaxError.h"
 #include <sstream>
-#ifdef HAVE_FMEMOPEN
-  #include "fmemopen.h"
-#else
+#include <cstdio>
+// fmemopen doesn't exist on no POSIX system
+// The function is defined here
+#if defined(_MSC_VER) || defined(__clang__)
 inline FILE* fmemopen(void* data, int len, const char *mode ){
-	FILE * tempfile = tmpfile();
-	fwrite(data, len, 1, tempfile);
-	rewind(tempfile);
-	return tempfile;
+       FILE * tempfile = tmpfile();
+       fwrite(data, len, 1, tempfile);
+       rewind(tempfile);
+       return tempfile;
 }
 #endif
 
