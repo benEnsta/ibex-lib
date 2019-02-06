@@ -55,7 +55,8 @@ configure_file(
 
 )
 # FILE(READ ${CMAKE_SOURCE_DIR}/plugins/lp_lib_none/ibex_LPWrapper.h IBEX_INTERVAL_LIB_WRAPPER_H)
-
+message(STATUS ${PACKAGE_VERSION})
+set(_IBEX_VERSION_ \"${PACKAGE_VERSION}\")
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/ibex_Setting.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/ibex_Setting.h
