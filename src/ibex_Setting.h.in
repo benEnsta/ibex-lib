@@ -7,4 +7,5 @@
 #cmakedefine _IBEX_WITH_CLP_	@_IBEX_WITH_CLP_@
 #cmakedefine _IBEX_WITH_NOLP_ 	@_IBEX_WITH_NOLP_@
 
+#cmakedefine _IBEX_VERSION_ @PACKAGE_VERSION@
 #endif
