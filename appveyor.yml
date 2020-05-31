@@ -40,6 +40,7 @@ build_script:
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - set MSBuildOptions=/v:m /p:Configuration=%Configuration% /logger:%MSBuildLogger%
   - msbuild %MSBuildOptions% PACKAGE.vcxproj
+  - msbuild %MSBuildOptions% CHECK.vcxproj
   - set PATH=%CPACK_PATH%;%PATH% # conflit with choco pack alias. need to put cpack.exe first
   - CPack.exe -G NSIS
   - CPack.exe -G ZIP
@@ -62,5 +63,5 @@ deploy:
   draft: true
   prerelease: false
   on:
-    branch: msvc_release_test      # release from master branch only
-    appveyor_repo_tag: false        # deploy on tag push only
+    # branch: msvc_release_test      # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
