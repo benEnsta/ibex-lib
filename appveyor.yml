@@ -17,11 +17,11 @@ environment:
       platform: x64
       CPPUNIT_DIR: C:\tools\vcpkg\installed\x64-windows
       LP_SOLVER: 'none'
-    - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
-      CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
-      platform: x64
-      LP_SOLVER: 'soplex'
-      CPPUNIT_DIR: C:\tools\vcpkg\installed\x64-windows
+    # - CMAKE_PLATFORM: "Visual Studio 14 2015 Win64"
+    #   CPACK_PATH: 'C:\\Program Files (x86)\\CMake\\bin'
+    #   platform: x64
+    #   LP_SOLVER: 'soplex'
+    #   CPPUNIT_DIR: C:\tools\vcpkg\installed\x64-windows
 
 init:
     - cmd: vcpkg cache
@@ -53,7 +53,7 @@ artifacts:
 
 
 deploy:
-  release: ibex-lib-v$(appveyor_build_version)
+  release: ibex-lib-2.6.8dev1
   description: 'ibexlib compiled without lp solver'
   provider: GitHub
   auth_token:
