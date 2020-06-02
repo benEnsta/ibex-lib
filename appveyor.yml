@@ -53,7 +53,7 @@ artifacts:
 
 
 deploy:
-  release: ibex-lib-2.6.8dev1
+  release: ibex-lib-2.8.6dev1
   description: 'ibexlib compiled without lp solver'
   provider: GitHub
   auth_token:
